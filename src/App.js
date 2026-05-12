@@ -84,48 +84,109 @@ function detectSimpleFoods(input) {
   const lower = input.toLowerCase();
   const tokens = lower.split(/[\s,+&]+/).filter(Boolean);
   const matched = [];
-  let numberBefore = 1;
 
-  const words = lower.split(/\s+/);
-  for (let i = 0; i < words.length; i++) {
-    const num = parseFloat(words[i]);
-    if (!isNaN(num)) { numberBefore = num; continue; }
-    const word = words[i].replace(/[^a-z\s]/g, "");
-    // try two-word combos first
-    const twoWord = `${words[i]} ${words[i+1] || ""}`.trim();
-    if (FOOD_DB[twoWord]) {
-      matched.push({ key: twoWord, qty: numberBefore, data: FOOD_DB[twoWord] });
-      numberBefore = 1; i++; continue;
-    }
-    if (FOOD_DB[word]) {
-      matched.push({ key: word, qty: numberBefore, data: FOOD_DB[word] });
-      numberBefore = 1;
+  // Match patterns like: "200g chicken", "2 roti", "150ml milk", "3 eggs"
+  const segmentRegex = /(\d+(?:\.\d+)?)\s*(g|ml|kg|l|pieces?|cups?|tbsp|tsp)?\s+([a-z][a-z\s]*?)(?=\d|,|\+|&|$)/gi;
+  let m;
+  while ((m = segmentRegex.exec(lower)) !== null) {
+    const rawNum = parseFloat(m[1]);
+    const unit = (m[2] || "").toLowerCase().replace(/s$/, ""); // normalize plural
+    const foodRaw = m[3].trim().replace(/\s+/g, " ");
+
+    const words = foodRaw.split(" ");
+    let found = false;
+    // try longest match first (e.g. "chicken breast" before "chicken")
+    for (let len = Math.min(words.length, 3); len >= 1; len--) {
+      const key = words.slice(0, len).join(" ").trim();
+      if (FOOD_DB[key]) {
+        const dbEntry = FOOD_DB[key];
+        let scale = 1;
+
+        if (unit === "g" || unit === "ml") {
+          // ALL db values normalized to per 100g/ml
+          scale = rawNum / 100;
+        } else if (unit === "kg" || unit === "l") {
+          scale = (rawNum * 1000) / 100;
+        } else if (unit === "tbsp") {
+          scale = rawNum * 0.15; // ~15g per tbsp
+        } else if (unit === "tsp") {
+          scale = rawNum * 0.05;
+        } else if (unit === "cup") {
+          scale = rawNum * 2.4; // ~240g per cup
+        } else {
+          // no unit = count (2 eggs, 3 roti)
+          scale = rawNum;
+        }
+
+        matched.push({
+          key,
+          qty: `${rawNum}${unit || "x"}`,
+          scale,
+          data: dbEntry
+        });
+        found = true;
+        break;
+      }
     }
   }
 
-  // if we matched >= 60% of non-numeric tokens, treat as simple
   const nonNumericTokens = tokens.filter(t => isNaN(parseFloat(t))).length;
-  const isSimple = matched.length > 0 && (matched.length / Math.max(nonNumericTokens, 1)) >= 0.5;
+  const isSimple = matched.length > 0 && (matched.length / Math.max(nonNumericTokens, 1)) >= 0.4;
   return { isSimple, matched };
 }
 
+// Sanity check — cap unrealistic values per item
+function sanitizeMacros(item) {
+  return {
+    ...item,
+    calories: Math.min(Math.max(Math.round(item.calories || 0), 0), 1500),
+    protein:  Math.min(Math.max(Math.round((item.protein  || 0) * 10) / 10, 0), 150),
+    carbs:    Math.min(Math.max(Math.round((item.carbs    || 0) * 10) / 10, 0), 300),
+    fat:      Math.min(Math.max(Math.round((item.fat      || 0) * 10) / 10, 0), 150),
+  };
+}
+
+// Sanity check full meal result
+function sanitizeResult(result) {
+  if (!result || !result.total) return result;
+  const items = (result.items || []).map(sanitizeMacros);
+  const total = items.reduce((acc, i) => ({
+    calories: acc.calories + i.calories,
+    protein:  Math.round((acc.protein  + i.protein)  * 10) / 10,
+    carbs:    Math.round((acc.carbs    + i.carbs)    * 10) / 10,
+    fat:      Math.round((acc.fat      + i.fat)      * 10) / 10,
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+  // if total calories still unrealistic for a single meal (>4000) flag it
+  if (total.calories > 4000) {
+    total.calories = Math.round(total.calories / 10);
+    total.protein  = Math.round(total.protein  / 10 * 10) / 10;
+    total.carbs    = Math.round(total.carbs    / 10 * 10) / 10;
+    total.fat      = Math.round(total.fat      / 10 * 10) / 10;
+  }
+
+  return { ...result, items, total };
+}
+
 function buildLocalResult(input, matched) {
-  const items = matched.map(m => ({
-    name: `${m.qty > 1 ? m.qty + "x " : ""}${m.key}`,
-    qty: `${m.qty} × ${m.data.per}`,
-    calories: Math.round(m.data.calories * m.qty),
-    protein: Math.round(m.data.protein * m.qty * 10) / 10,
-    carbs: Math.round(m.data.carbs * m.qty * 10) / 10,
-    fat: Math.round(m.data.fat * m.qty * 10) / 10,
+  const items = matched.map(m => sanitizeMacros({
+    name:     m.key,
+    qty:      m.qty,
+    calories: m.data.calories * m.scale,
+    protein:  m.data.protein  * m.scale,
+    carbs:    m.data.carbs    * m.scale,
+    fat:      m.data.fat      * m.scale,
   }));
   const total = items.reduce((acc, i) => ({
     calories: acc.calories + i.calories,
-    protein: Math.round((acc.protein + i.protein) * 10) / 10,
-    carbs: Math.round((acc.carbs + i.carbs) * 10) / 10,
-    fat: Math.round((acc.fat + i.fat) * 10) / 10,
-  }), { calories:0, protein:0, carbs:0, fat:0 });
-  return { name: input, items, total, tip: "Estimated from local database — values are approximate.", source: "local" };
+    protein:  Math.round((acc.protein + i.protein) * 10) / 10,
+    carbs:    Math.round((acc.carbs   + i.carbs)   * 10) / 10,
+    fat:      Math.round((acc.fat     + i.fat)     * 10) / 10,
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+  return sanitizeResult({ name: input, items, total, tip: "Estimated from local database — values are approximate.", source: "local" });
 }
+
+
 
 // ============================================================
 // 4. CACHE SYSTEM
