@@ -1,0 +1,9 @@
+{
+  "short_name": "FitTrack",
+  "name": "FitTrack AI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait"
+}
