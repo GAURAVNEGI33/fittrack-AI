@@ -10,49 +10,105 @@ const AI_CONFIG = {
 };
 
 const FOOD_DB = {
-  "rice":          { calories:130, protein:2.7, carbs:28,  fat:0.3 },
-  "white rice":    { calories:130, protein:2.7, carbs:28,  fat:0.3 },
-  "brown rice":    { calories:112, protein:2.6, carbs:24,  fat:0.9 },
-  "roti":          { calories:120, protein:3.5, carbs:22,  fat:2.5, perPiece:true },
-  "chapati":       { calories:120, protein:3.5, carbs:22,  fat:2.5, perPiece:true },
-  "oats":          { calories:147, protein:5,   carbs:25,  fat:2.5 },
-  "bread":         { calories:79,  protein:2.7, carbs:15,  fat:1,   perPiece:true },
-  "brown bread":   { calories:69,  protein:3,   carbs:12,  fat:1,   perPiece:true },
-  "pasta":         { calories:158, protein:5.8, carbs:31,  fat:0.9 },
-  "egg":           { calories:78,  protein:6,   carbs:0.6, fat:5,   perPiece:true },
-  "eggs":          { calories:78,  protein:6,   carbs:0.6, fat:5,   perPiece:true },
-  "egg white":     { calories:17,  protein:3.6, carbs:0.2, fat:0,   perPiece:true },
-  "egg whites":    { calories:17,  protein:3.6, carbs:0.2, fat:0,   perPiece:true },
-  "chicken breast":{ calories:165, protein:31,  carbs:0,   fat:3.6 },
-  "chicken":       { calories:165, protein:31,  carbs:0,   fat:3.6 },
-  "paneer":        { calories:265, protein:18,  carbs:3.4, fat:20  },
-  "tuna":          { calories:116, protein:25,  carbs:0,   fat:1   },
-  "fish":          { calories:136, protein:22,  carbs:0,   fat:5   },
-  "mutton":        { calories:294, protein:25,  carbs:0,   fat:21  },
-  "tofu":          { calories:76,  protein:8,   carbs:1.9, fat:4.2 },
-  "milk":          { calories:61,  protein:3.2, carbs:4.8, fat:3.3 },
-  "curd":          { calories:60,  protein:3.5, carbs:4.7, fat:3.3 },
-  "yogurt":        { calories:59,  protein:3.5, carbs:5,   fat:3.3 },
-  "greek yogurt":  { calories:97,  protein:9,   carbs:3.6, fat:5   },
-  "whey protein":  { calories:120, protein:24,  carbs:3,   fat:2,   perPiece:true },
-  "dal":           { calories:116, protein:9,   carbs:20,  fat:0.4 },
-  "lentils":       { calories:116, protein:9,   carbs:20,  fat:0.4 },
-  "rajma":         { calories:127, protein:8.7, carbs:22,  fat:0.5 },
-  "chana":         { calories:164, protein:8.9, carbs:27,  fat:2.6 },
-  "peanut butter": { calories:188, protein:8,   carbs:6,   fat:16,  perPiece:true },
-  "peanuts":       { calories:166, protein:7,   carbs:6,   fat:14  },
-  "banana":        { calories:89,  protein:1.1, carbs:23,  fat:0.3, perPiece:true },
-  "apple":         { calories:52,  protein:0.3, carbs:14,  fat:0.2, perPiece:true },
-  "mango":         { calories:60,  protein:0.8, carbs:15,  fat:0.4 },
-  "orange":        { calories:47,  protein:0.9, carbs:12,  fat:0.1, perPiece:true },
-  "spinach":       { calories:23,  protein:2.9, carbs:3.6, fat:0.4 },
-  "broccoli":      { calories:34,  protein:2.8, carbs:7,   fat:0.4 },
-  "potato":        { calories:77,  protein:2,   carbs:17,  fat:0.1 },
-  "almonds":       { calories:164, protein:6,   carbs:6,   fat:14  },
-  "olive oil":     { calories:119, protein:0,   carbs:0,   fat:13.5,perPiece:true },
-  "butter":        { calories:102, protein:0.1, carbs:0,   fat:11.5,perPiece:true },
-  "sugar":         { calories:48,  protein:0,   carbs:12,  fat:0,   perPiece:true },
-  "honey":         { calories:64,  protein:0.1, carbs:17,  fat:0,   perPiece:true },
+  // ── GRAINS (per 100g cooked unless noted) ──
+  "rice":           { calories:130, protein:2.7,  carbs:28.2, fat:0.3  },
+  "white rice":     { calories:130, protein:2.7,  carbs:28.2, fat:0.3  },
+  "brown rice":     { calories:123, protein:2.7,  carbs:25.6, fat:0.9  },
+  "basmati rice":   { calories:121, protein:3.5,  carbs:25.2, fat:0.4  },
+  "roti":           { calories:104, protein:3.1,  carbs:18.0, fat:2.5,  perPiece:true }, // 1 medium roti ~40g
+  "chapati":        { calories:104, protein:3.1,  carbs:18.0, fat:2.5,  perPiece:true },
+  "paratha":        { calories:260, protein:5.0,  carbs:36.0, fat:10.0, perPiece:true }, // 1 paratha ~90g
+  "oats":           { calories:389, protein:16.9, carbs:66.3, fat:6.9  }, // per 100g dry
+  "bread":          { calories:79,  protein:2.7,  carbs:15.0, fat:1.0,  perPiece:true }, // 1 slice ~30g
+  "brown bread":    { calories:69,  protein:3.6,  carbs:11.5, fat:1.2,  perPiece:true },
+  "pasta":          { calories:131, protein:5.0,  carbs:25.0, fat:1.1  }, // per 100g cooked
+  "quinoa":         { calories:120, protein:4.4,  carbs:21.3, fat:1.9  }, // per 100g cooked
+  "poha":           { calories:110, protein:2.5,  carbs:23.0, fat:0.5  }, // per 100g cooked
+  "upma":           { calories:150, protein:3.5,  carbs:22.0, fat:5.0  },
+
+  // ── PROTEINS (per 100g unless noted) ──
+  "egg":            { calories:155, protein:13.0, carbs:1.1,  fat:11.0, perPiece:true }, // 1 whole egg ~60g = 93 kcal
+  "eggs":           { calories:155, protein:13.0, carbs:1.1,  fat:11.0, perPiece:true },
+  "egg white":      { calories:52,  protein:10.9, carbs:0.7,  fat:0.2,  perPiece:true }, // per egg white ~33g
+  "egg whites":     { calories:52,  protein:10.9, carbs:0.7,  fat:0.2,  perPiece:true },
+  "egg yolk":       { calories:55,  protein:2.7,  carbs:0.6,  fat:4.5,  perPiece:true },
+  "chicken breast": { calories:165, protein:31.0, carbs:0.0,  fat:3.6  },
+  "chicken":        { calories:165, protein:31.0, carbs:0.0,  fat:3.6  },
+  "chicken thigh":  { calories:209, protein:26.0, carbs:0.0,  fat:10.9 },
+  "grilled chicken":{ calories:165, protein:31.0, carbs:0.0,  fat:3.6  },
+  "paneer":         { calories:265, protein:18.3, carbs:1.2,  fat:20.8 },
+  "tuna":           { calories:116, protein:25.5, carbs:0.0,  fat:1.0  },
+  "salmon":         { calories:208, protein:20.0, carbs:0.0,  fat:13.0 },
+  "fish":           { calories:136, protein:22.0, carbs:0.0,  fat:5.0  },
+  "mutton":         { calories:294, protein:25.6, carbs:0.0,  fat:21.0 },
+  "beef":           { calories:250, protein:26.0, carbs:0.0,  fat:17.0 },
+  "tofu":           { calories:76,  protein:8.0,  carbs:1.9,  fat:4.2  },
+  "whey protein":   { calories:120, protein:24.0, carbs:3.0,  fat:2.0,  perPiece:true }, // per scoop 30g
+  "protein shake":  { calories:150, protein:25.0, carbs:8.0,  fat:3.0,  perPiece:true },
+
+  // ── DAIRY (per 100ml/g) ──
+  "milk":           { calories:61,  protein:3.2,  carbs:4.8,  fat:3.3  },
+  "full fat milk":  { calories:61,  protein:3.2,  carbs:4.8,  fat:3.3  },
+  "skimmed milk":   { calories:35,  protein:3.5,  carbs:5.0,  fat:0.1  },
+  "curd":           { calories:60,  protein:3.5,  carbs:4.7,  fat:3.3  },
+  "yogurt":         { calories:61,  protein:3.5,  carbs:4.7,  fat:3.3  },
+  "greek yogurt":   { calories:97,  protein:9.0,  carbs:3.6,  fat:5.0  },
+  "cheese":         { calories:402, protein:25.0, carbs:1.3,  fat:33.0 },
+  "butter":         { calories:717, protein:0.9,  carbs:0.1,  fat:81.0 }, // per 100g; perPiece=1tbsp~14g=100kcal
+  "ghee":           { calories:900, protein:0.0,  carbs:0.0,  fat:100.0},
+
+  // ── LEGUMES (per 100g cooked) ──
+  "dal":            { calories:116, protein:9.0,  carbs:20.0, fat:0.4  },
+  "moong dal":      { calories:105, protein:7.0,  carbs:19.0, fat:0.4  },
+  "toor dal":       { calories:118, protein:7.2,  carbs:20.7, fat:0.4  },
+  "lentils":        { calories:116, protein:9.0,  carbs:20.0, fat:0.4  },
+  "rajma":          { calories:127, protein:8.7,  carbs:22.8, fat:0.5  },
+  "chana":          { calories:164, protein:8.9,  carbs:27.4, fat:2.6  },
+  "chole":          { calories:164, protein:8.9,  carbs:27.4, fat:2.6  },
+  "black beans":    { calories:132, protein:8.9,  carbs:23.7, fat:0.5  },
+  "peanut butter":  { calories:588, protein:25.0, carbs:20.0, fat:50.0 }, // per 100g; 2tbsp~32g=188kcal
+  "peanuts":        { calories:567, protein:25.8, carbs:16.1, fat:49.2 },
+  "almonds":        { calories:579, protein:21.2, carbs:21.6, fat:49.9 },
+  "walnuts":        { calories:654, protein:15.2, carbs:13.7, fat:65.2 },
+  "cashews":        { calories:553, protein:18.2, carbs:30.2, fat:43.9 },
+
+  // ── FRUITS (per 100g) ──
+  "banana":         { calories:89,  protein:1.1,  carbs:22.8, fat:0.3,  perPiece:true }, // 1 medium ~120g = 107kcal
+  "apple":          { calories:52,  protein:0.3,  carbs:13.8, fat:0.2,  perPiece:true }, // 1 medium ~150g = 78kcal
+  "mango":          { calories:60,  protein:0.8,  carbs:15.0, fat:0.4  },
+  "orange":         { calories:47,  protein:0.9,  carbs:11.8, fat:0.1,  perPiece:true },
+  "grapes":         { calories:67,  protein:0.6,  carbs:17.2, fat:0.4  },
+  "watermelon":     { calories:30,  protein:0.6,  carbs:7.6,  fat:0.2  },
+  "papaya":         { calories:43,  protein:0.5,  carbs:10.8, fat:0.3  },
+  "strawberry":     { calories:32,  protein:0.7,  carbs:7.7,  fat:0.3  },
+
+  // ── VEGETABLES (per 100g) ──
+  "spinach":        { calories:23,  protein:2.9,  carbs:3.6,  fat:0.4  },
+  "broccoli":       { calories:34,  protein:2.8,  carbs:6.6,  fat:0.4  },
+  "potato":         { calories:77,  protein:2.0,  carbs:17.0, fat:0.1  },
+  "sweet potato":   { calories:86,  protein:1.6,  carbs:20.1, fat:0.1  },
+  "carrot":         { calories:41,  protein:0.9,  carbs:9.6,  fat:0.2  },
+  "cucumber":       { calories:16,  protein:0.7,  carbs:3.6,  fat:0.1  },
+  "tomato":         { calories:18,  protein:0.9,  carbs:3.9,  fat:0.2  },
+  "onion":          { calories:40,  protein:1.1,  carbs:9.3,  fat:0.1  },
+  "cabbage":        { calories:25,  protein:1.3,  carbs:5.8,  fat:0.1  },
+  "cauliflower":    { calories:25,  protein:1.9,  carbs:5.0,  fat:0.3  },
+
+  // ── OILS & CONDIMENTS (per 100g) ──
+  "olive oil":      { calories:884, protein:0.0,  carbs:0.0,  fat:100.0},
+  "coconut oil":    { calories:862, protein:0.0,  carbs:0.0,  fat:100.0},
+  "sugar":          { calories:387, protein:0.0,  carbs:99.8, fat:0.0  },
+  "honey":          { calories:304, protein:0.3,  carbs:82.4, fat:0.0  },
+
+  // ── INDIAN MEALS (per 100g approximate) ──
+  "chicken curry":  { calories:150, protein:12.0, carbs:5.0,  fat:9.0  },
+  "dal makhani":    { calories:140, protein:7.5,  carbs:16.0, fat:5.5  },
+  "palak paneer":   { calories:160, protein:8.0,  carbs:8.0,  fat:11.0 },
+  "biryani":        { calories:170, protein:8.0,  carbs:25.0, fat:5.0  },
+  "samosa":         { calories:262, protein:4.5,  carbs:30.0, fat:14.0, perPiece:true },
+  "idli":           { calories:58,  protein:2.0,  carbs:12.0, fat:0.4,  perPiece:true },
+  "dosa":           { calories:168, protein:3.9,  carbs:30.0, fat:3.7,  perPiece:true },
+  "khichdi":        { calories:130, protein:5.5,  carbs:22.0, fat:2.5  },
 };
 
 function sanitizeMacros(item) {
@@ -227,153 +283,222 @@ STRICT RULES:
 }
 
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeUp { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
   @keyframes progressAnim { from{width:0}to{width:var(--w)} }
   @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.5;} }
   @keyframes popIn { 0%{transform:scale(0.9);opacity:0;}70%{transform:scale(1.02);}100%{transform:scale(1);opacity:1;} }
-  html,body { background:#060606; height:100%; }
-  .app { display:flex; flex-direction:column; height:100vh; max-width:430px; margin:0 auto; background:#060606; font-family:'Inter',sans-serif; color:#fff; overflow:hidden; }
-  .nav { flex-shrink:0; background:#060606; border-top:1px solid #111; display:flex; padding:0.55rem 0.5rem; gap:0.2rem; }
-  .nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.2rem; background:none; border:none; cursor:pointer; padding:0.4rem 0.3rem; border-radius:12px; transition:background 0.2s; font-family:'Inter',sans-serif; }
+  @keyframes marquee { from{transform:translateX(0)}to{transform:translateX(-50%)} }
+
+  html,body { background:#000; height:100%; }
+  .app { display:flex; flex-direction:column; height:100vh; max-width:430px; margin:0 auto; background:#000; font-family:'Inter',sans-serif; color:#fff; overflow:hidden; }
+
+  /* NAV */
+  .nav { flex-shrink:0; background:#000; border-top:1px solid #1a1a1a; display:flex; padding:0.55rem 0.5rem; gap:0.2rem; }
+  .nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.2rem; background:none; border:none; cursor:pointer; padding:0.4rem 0.3rem; border-radius:8px; transition:background 0.2s; font-family:'Inter',sans-serif; }
   .nav-btn.active { background:#111; }
   .nav-btn .nav-icon { font-size:1.2rem; }
-  .nav-btn .nav-label { font-size:0.58rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
-  .nav-btn.active .nav-label { color:#a78bfa; }
+  .nav-btn .nav-label { font-size:0.58rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; }
+  .nav-btn.active .nav-label { color:#fff; }
   .nav-btn:not(.active) .nav-label { color:#333; }
+
   .page { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
-  .page::-webkit-scrollbar { width:3px; }
-  .page::-webkit-scrollbar-thumb { background:#1a1a1a; border-radius:99px; }
+  .page::-webkit-scrollbar { width:2px; }
+  .page::-webkit-scrollbar-thumb { background:#1a1a1a; }
+
+  /* HOME */
   .home { padding:0 0 2rem; animation:fadeUp 0.5s ease both; }
-  .home-hero { padding:2rem 1.2rem 1.5rem; background:linear-gradient(180deg,#0d0d1a 0%,#060606 100%); position:relative; overflow:hidden; }
-  .home-hero::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(139,92,246,0.12) 0%,transparent 70%); border-radius:50%; }
-  .hero-badge { display:inline-flex; align-items:center; gap:0.4rem; background:#111; border:1px solid #1e1e1e; border-radius:50px; padding:0.3rem 0.8rem; font-size:0.7rem; color:#a78bfa; font-weight:600; margin-bottom:1rem; }
-  .hero-title { font-size:2rem; font-weight:900; letter-spacing:-0.04em; line-height:1.15; margin-bottom:0.5rem; }
-  .hero-title span { background:linear-gradient(135deg,#a78bfa,#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .hero-sub { color:#444; font-size:0.88rem; line-height:1.6; }
+
+  .home-hero {
+    padding:2.5rem 1.2rem 2rem;
+    background:#000;
+    position:relative; overflow:hidden;
+    border-bottom:1px solid #1a1a1a;
+  }
+  .home-hero::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,#fff,transparent);
+    opacity:0.08;
+  }
+
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:0.4rem;
+    background:transparent; border:1px solid #2a2a2a;
+    border-radius:0; padding:0.25rem 0.8rem;
+    font-size:0.62rem; color:#666; font-weight:700;
+    letter-spacing:0.15em; text-transform:uppercase;
+    margin-bottom:1.2rem;
+  }
+
+  .hero-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:3.8rem; font-weight:400;
+    letter-spacing:0.02em; line-height:0.95;
+    margin-bottom:1rem; color:#fff;
+    text-transform:uppercase;
+  }
+  .hero-title span { color:#fff; -webkit-text-fill-color:transparent; -webkit-text-stroke:1px #fff; }
+
+  .hero-sub { color:#444; font-size:0.78rem; line-height:1.7; letter-spacing:0.04em; text-transform:uppercase; font-weight:500; }
+
+  .hero-cta {
+    display:inline-flex; align-items:center; gap:0.5rem;
+    margin-top:1.5rem; background:#fff; color:#000;
+    border:none; padding:0.75rem 1.5rem;
+    font-size:0.75rem; font-weight:800;
+    letter-spacing:0.12em; text-transform:uppercase;
+    cursor:pointer; font-family:'Inter',sans-serif;
+    transition:opacity 0.2s;
+  }
+  .hero-cta:hover { opacity:0.85; }
+
+  /* MARQUEE */
+  .marquee-wrap { overflow:hidden; border-top:1px solid #111; border-bottom:1px solid #111; padding:0.5rem 0; background:#000; }
+  .marquee-track { display:flex; gap:2rem; animation:marquee 12s linear infinite; width:max-content; }
+  .marquee-item { font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:#222; white-space:nowrap; }
+  .marquee-dot { color:#333; }
+
   .section { padding:1.2rem 1.2rem 0; }
-  .section-title { font-size:0.68rem; font-weight:700; color:#2d2d2d; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:0.75rem; }
-  .goal-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
-  .goal-card { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:14px; padding:1rem; cursor:pointer; transition:all 0.2s; text-align:left; }
-  .goal-card.selected { border-color:#7c3aed; background:#0f0f1a; box-shadow:0 0 16px rgba(124,58,237,0.15); }
-  .goal-card .goal-icon { font-size:1.4rem; margin-bottom:0.4rem; }
-  .goal-card .goal-name { font-size:0.82rem; font-weight:700; color:#e5e7eb; margin-bottom:0.15rem; }
-  .goal-card .goal-desc { font-size:0.68rem; color:#374151; }
-  .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
-  .feat-card { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:16px; padding:1.1rem; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
-  .feat-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
-  .feat-card.purple::after { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
-  .feat-card.blue::after { background:linear-gradient(90deg,#2563eb,#60a5fa); }
-  .feat-card.green::after { background:linear-gradient(90deg,#059669,#10b981); }
-  .feat-card.orange::after { background:linear-gradient(90deg,#d97706,#f59e0b); }
-  .feat-card:hover { border-color:#222; transform:translateY(-2px); }
-  .feat-icon { font-size:1.5rem; margin-bottom:0.5rem; }
-  .feat-name { font-size:0.82rem; font-weight:700; color:#e5e7eb; margin-bottom:0.2rem; }
-  .feat-desc { font-size:0.68rem; color:#374151; line-height:1.5; }
+  .section-title { font-size:0.62rem; font-weight:700; color:#333; text-transform:uppercase; letter-spacing:0.15em; margin-bottom:0.75rem; border-left:2px solid #fff; padding-left:0.5rem; }
+
+  /* GOAL CARDS */
+  .goal-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+  .goal-card { background:#000; border:1px solid #1a1a1a; border-radius:0; padding:1rem; cursor:pointer; transition:all 0.2s; text-align:left; }
+  .goal-card.selected { border-color:#fff; background:#0a0a0a; }
+  .goal-card .goal-icon { font-size:1.3rem; margin-bottom:0.4rem; color:#fff; font-weight:900; }
+  .goal-card .goal-name { font-size:0.82rem; font-weight:800; color:#fff; margin-bottom:0.15rem; letter-spacing:0.02em; text-transform:uppercase; }
+  .goal-card .goal-desc { font-size:0.65rem; color:#333; letter-spacing:0.03em; }
+
+  /* FEATURE CARDS */
+  .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+  .feat-card { background:#000; border:1px solid #1a1a1a; border-radius:0; padding:1.1rem; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+  .feat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:#fff; opacity:0; transition:opacity 0.2s; }
+  .feat-card:hover { border-color:#fff; }
+  .feat-card:hover::before { opacity:0.3; }
+  .feat-card::after { display:none; }
+  .feat-icon { font-size:1.4rem; margin-bottom:0.6rem; }
+  .feat-name { font-size:0.78rem; font-weight:800; color:#fff; margin-bottom:0.2rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .feat-desc { font-size:0.65rem; color:#333; line-height:1.5; }
   .feat-arrow { position:absolute; bottom:0.8rem; right:0.9rem; color:#222; font-size:0.75rem; }
+
+  /* TRACKER */
   .tracker { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
-  .tracker-header { padding:1.5rem 1.2rem 1rem; border-bottom:1px solid #0f0f0f; }
-  .tracker-header h2 { font-size:1.3rem; font-weight:800; }
-  .tracker-header p { color:#333; font-size:0.8rem; margin-top:0.2rem; }
+  .tracker-header { padding:1.5rem 1.2rem 1rem; border-bottom:1px solid #111; }
+  .tracker-header h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.05em; }
+  .tracker-header p { color:#333; font-size:0.72rem; margin-top:0.3rem; text-transform:uppercase; letter-spacing:0.08em; }
+
   .macro-ring { display:flex; justify-content:center; padding:1.5rem 1.2rem 1rem; }
   .ring-center { position:relative; width:140px; height:140px; }
   .ring-svg { transform:rotate(-90deg); }
   .ring-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  .ring-cal { font-size:1.6rem; font-weight:900; }
-  .ring-lbl { font-size:0.65rem; color:#333; text-transform:uppercase; letter-spacing:0.1em; }
-  .macro-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; padding:0 1.2rem; }
-  .macro-card { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:12px; padding:0.8rem; }
+  .ring-cal { font-family:'Bebas Neue',sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.05em; }
+  .ring-lbl { font-size:0.6rem; color:#333; text-transform:uppercase; letter-spacing:0.12em; }
+
+  .macro-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; padding:0 1.2rem; }
+  .macro-card { background:#000; border:1px solid #111; border-radius:0; padding:0.8rem; }
   .macro-val { font-size:1.1rem; font-weight:800; }
-  .macro-lbl { font-size:0.62rem; color:#333; text-transform:uppercase; letter-spacing:0.08em; margin-top:0.15rem; }
-  .macro-bar { height:3px; background:#111; border-radius:99px; overflow:hidden; margin-top:0.5rem; }
-  .macro-fill { height:100%; border-radius:99px; transition:width 0.5s ease; }
-  .log-input-area { margin:1rem 1.2rem 0; background:#0f0f0f; border:1px solid #1a1a1a; border-radius:16px; padding:1rem; }
+  .macro-lbl { font-size:0.6rem; color:#333; text-transform:uppercase; letter-spacing:0.1em; margin-top:0.15rem; }
+  .macro-bar { height:2px; background:#111; overflow:hidden; margin-top:0.5rem; }
+  .macro-fill { height:100%; transition:width 0.5s ease; }
+
+  .log-input-area { margin:1rem 1.2rem 0; background:#000; border:1px solid #1a1a1a; border-radius:0; padding:1rem; }
   .log-textarea { width:100%; background:transparent; border:none; outline:none; color:#e5e7eb; font-size:0.88rem; font-family:'Inter',sans-serif; resize:none; line-height:1.7; }
-  .log-textarea::placeholder { color:#222; }
-  .log-input-footer { display:flex; justify-content:space-between; align-items:center; margin-top:0.7rem; padding-top:0.7rem; border-top:1px solid #141414; }
-  .btn-primary { background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; font-weight:700; font-size:0.82rem; border:none; border-radius:50px; padding:0.6rem 1.4rem; cursor:pointer; font-family:'Inter',sans-serif; transition:opacity 0.2s; box-shadow:0 4px 14px rgba(124,58,237,0.3); }
-  .btn-primary:disabled { opacity:0.25; cursor:not-allowed; }
-  .btn-sm { padding:0.45rem 1rem; font-size:0.75rem; }
-  .meals-list { padding:1rem 1.2rem 0; display:flex; flex-direction:column; gap:0.6rem; }
-  .meal-entry { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:14px; padding:0.9rem 1rem; animation:popIn 0.4s ease both; }
+  .log-textarea::placeholder { color:#1f1f1f; }
+  .log-input-footer { display:flex; justify-content:space-between; align-items:center; margin-top:0.7rem; padding-top:0.7rem; border-top:1px solid #111; }
+
+  .btn-primary { background:#fff; color:#000; font-weight:800; font-size:0.72rem; border:none; border-radius:0; padding:0.6rem 1.4rem; cursor:pointer; font-family:'Inter',sans-serif; transition:opacity 0.2s; letter-spacing:0.1em; text-transform:uppercase; }
+  .btn-primary:disabled { opacity:0.2; cursor:not-allowed; }
+  .btn-sm { padding:0.45rem 1rem; font-size:0.68rem; }
+
+  .meals-list { padding:1rem 1.2rem 0; display:flex; flex-direction:column; gap:0.5rem; }
+  .meal-entry { background:#000; border:1px solid #111; border-radius:0; padding:0.9rem 1rem; animation:popIn 0.4s ease both; }
   .meal-entry-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
-  .meal-entry-name { font-size:0.85rem; font-weight:600; color:#e5e7eb; }
+  .meal-entry-name { font-size:0.82rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:0.03em; }
   .meal-entry-meta { display:flex; align-items:center; gap:0.5rem; }
-  .meal-entry-time { font-size:0.65rem; color:#2d2d2d; }
-  .source-badge { font-size:0.58rem; padding:0.1rem 0.4rem; border-radius:50px; font-weight:700; }
-  .src-local { background:rgba(16,185,129,0.1); color:#10b981; }
-  .src-cache { background:rgba(96,165,250,0.1); color:#60a5fa; }
-  .src-ai { background:rgba(167,139,250,0.1); color:#a78bfa; }
-  .src-fallback { background:rgba(245,158,11,0.1); color:#f59e0b; }
-  .meal-entry-macros { display:flex; gap:0.5rem; flex-wrap:wrap; }
-  .macro-tag { padding:0.18rem 0.55rem; border-radius:50px; font-size:0.68rem; font-weight:700; }
+  .meal-entry-time { font-size:0.62rem; color:#222; }
+  .source-badge { font-size:0.55rem; padding:0.1rem 0.4rem; font-weight:700; letter-spacing:0.06em; border-radius:0; }
+  .src-local { background:#fff; color:#000; }
+  .src-cache { background:#1a1a1a; color:#fff; }
+  .src-ai { background:#fff; color:#000; }
+  .src-fallback { background:#1a1a1a; color:#666; }
+  .meal-entry-macros { display:flex; gap:0.4rem; flex-wrap:wrap; }
+  .macro-tag { padding:0.18rem 0.55rem; border-radius:0; font-size:0.65rem; font-weight:700; letter-spacing:0.04em; border:1px solid #1a1a1a; color:#666; background:transparent; }
+
+  /* DIET */
   .diet { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
-  .diet-header { padding:1.5rem 1.2rem 1rem; }
-  .diet-header h2 { font-size:1.3rem; font-weight:800; }
-  .diet-header p { color:#333; font-size:0.8rem; margin-top:0.2rem; }
-  .filter-row { display:flex; gap:0.5rem; padding:0 1.2rem 1rem; overflow-x:auto; }
+  .diet-header { padding:1.5rem 1.2rem 1rem; border-bottom:1px solid #111; }
+  .diet-header h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.05em; }
+  .diet-header p { color:#333; font-size:0.72rem; margin-top:0.3rem; text-transform:uppercase; letter-spacing:0.08em; }
+  .filter-row { display:flex; gap:0.4rem; padding:1rem 1.2rem; overflow-x:auto; }
   .filter-row::-webkit-scrollbar { display:none; }
-  .filter-chip { white-space:nowrap; background:#0f0f0f; border:1px solid #1a1a1a; border-radius:50px; padding:0.35rem 0.85rem; font-size:0.72rem; color:#333; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.18s; }
-  .filter-chip.active { border-color:#7c3aed; color:#a78bfa; background:#0f0f1a; }
-  .diet-cards { display:flex; flex-direction:column; gap:0.7rem; padding:0 1.2rem; }
-  .diet-card { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:16px; overflow:hidden; }
-  .diet-card-header { padding:1rem 1.1rem 0.8rem; display:flex; justify-content:space-between; align-items:flex-start; }
-  .diet-card-title { font-size:0.92rem; font-weight:700; color:#e5e7eb; }
-  .diet-card-subtitle { font-size:0.72rem; color:#374151; margin-top:0.2rem; }
-  .goal-badge { padding:0.2rem 0.65rem; border-radius:50px; font-size:0.65rem; font-weight:700; }
-  .diet-meals { padding:0 1.1rem 1rem; display:flex; flex-direction:column; gap:0.4rem; }
+  .filter-chip { white-space:nowrap; background:transparent; border:1px solid #1a1a1a; border-radius:0; padding:0.3rem 0.8rem; font-size:0.65rem; color:#333; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.18s; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; }
+  .filter-chip.active { border-color:#fff; color:#fff; background:#0a0a0a; }
+  .diet-cards { display:flex; flex-direction:column; gap:0.5rem; padding:0 1.2rem; }
+  .diet-card { background:#000; border:1px solid #111; border-radius:0; overflow:hidden; }
+  .diet-card-header { padding:1rem 1.1rem 0.8rem; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #0a0a0a; }
+  .diet-card-title { font-size:0.88rem; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:0.03em; }
+  .diet-card-subtitle { font-size:0.65rem; color:#333; margin-top:0.2rem; letter-spacing:0.05em; }
+  .goal-badge { padding:0.18rem 0.6rem; border-radius:0; font-size:0.62rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; border:1px solid; }
+  .diet-meals { padding:0.8rem 1.1rem; display:flex; flex-direction:column; gap:0.4rem; }
   .diet-meal-row { display:flex; justify-content:space-between; }
-  .diet-meal-name { font-size:0.78rem; color:#6b7280; }
-  .diet-meal-cal { font-size:0.72rem; color:#374151; font-weight:600; }
+  .diet-meal-name { font-size:0.75rem; color:#444; }
+  .diet-meal-cal { font-size:0.7rem; color:#333; font-weight:700; }
   .diet-footer { padding:0.7rem 1.1rem; border-top:1px solid #111; display:flex; justify-content:space-between; }
-  .diet-macro-val { font-size:0.82rem; font-weight:700; text-align:center; }
-  .diet-macro-lbl { font-size:0.6rem; color:#333; text-align:center; }
+  .diet-macro-val { font-size:0.82rem; font-weight:800; text-align:center; color:#fff; }
+  .diet-macro-lbl { font-size:0.58rem; color:#333; text-align:center; text-transform:uppercase; letter-spacing:0.06em; }
+
+  /* CHAT */
   .chat-outer { display:flex; flex-direction:column; flex:1; overflow:hidden; }
-  .chat-header { flex-shrink:0; padding:1rem 1.2rem; border-bottom:1px solid #0f0f0f; display:flex; align-items:center; gap:0.7rem; }
-  .chat-avatar { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#7c3aed,#2563eb); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
-  .chat-header-text h3 { font-size:0.95rem; font-weight:700; }
-  .chat-header-text p { font-size:0.72rem; color:#333; }
-  .online-dot { width:7px; height:7px; background:#10b981; border-radius:50%; margin-left:auto; }
+  .chat-header { flex-shrink:0; padding:1rem 1.2rem; border-bottom:1px solid #111; display:flex; align-items:center; gap:0.7rem; }
+  .chat-avatar { width:34px; height:34px; border-radius:0; background:#fff; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+  .chat-header-text h3 { font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; }
+  .chat-header-text p { font-size:0.65rem; color:#333; text-transform:uppercase; letter-spacing:0.06em; }
+  .online-dot { width:6px; height:6px; background:#fff; border-radius:50%; margin-left:auto; }
   .messages-wrap { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.8rem; }
-  .messages-wrap::-webkit-scrollbar { width:3px; }
-  .messages-wrap::-webkit-scrollbar-thumb { background:#1a1a1a; border-radius:99px; }
+  .messages-wrap::-webkit-scrollbar { width:2px; }
+  .messages-wrap::-webkit-scrollbar-thumb { background:#111; }
   .bubble-wrap { display:flex; flex-direction:column; }
   .bubble-wrap.user { align-items:flex-end; }
   .bubble-wrap.ai { align-items:flex-start; }
-  .bubble { max-width:85%; padding:0.75rem 0.95rem; border-radius:16px; font-size:0.85rem; line-height:1.65; white-space:pre-wrap; word-break:break-word; }
-  .bubble.user { background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; border-bottom-right-radius:4px; }
-  .bubble.ai { background:#111; border:1px solid #1a1a1a; color:#d1d5db; border-bottom-left-radius:4px; }
-  .bubble-time { font-size:0.6rem; color:#222; margin-top:0.25rem; padding:0 0.25rem; }
-  .chat-input-bar { flex-shrink:0; padding:0.75rem 1rem; border-top:1px solid #0f0f0f; display:flex; gap:0.6rem; align-items:flex-end; background:#060606; }
-  .chat-input-wrap { flex:1; background:#0f0f0f; border:1px solid #1e1e1e; border-radius:14px; padding:0.6rem 0.9rem; }
-  .chat-input-wrap:focus-within { border-color:#7c3aed55; }
+  .bubble { max-width:85%; padding:0.75rem 0.95rem; font-size:0.85rem; line-height:1.65; white-space:pre-wrap; word-break:break-word; border-radius:0; }
+  .bubble.user { background:#fff; color:#000; font-weight:500; }
+  .bubble.ai { background:#0a0a0a; border:1px solid #1a1a1a; color:#aaa; }
+  .bubble-time { font-size:0.58rem; color:#222; margin-top:0.25rem; padding:0 0.25rem; letter-spacing:0.06em; }
+  .chat-input-bar { flex-shrink:0; padding:0.75rem 1rem; border-top:1px solid #111; display:flex; gap:0.6rem; align-items:flex-end; background:#000; }
+  .chat-input-wrap { flex:1; background:#000; border:1px solid #1a1a1a; border-radius:0; padding:0.6rem 0.9rem; }
+  .chat-input-wrap:focus-within { border-color:#333; }
   .chat-textarea { width:100%; background:transparent; border:none; outline:none; color:#e5e7eb; font-size:0.85rem; font-family:'Inter',sans-serif; resize:none; line-height:1.6; display:block; }
-  .chat-textarea::placeholder { color:#222; }
-  .send-btn { width:38px; height:38px; border-radius:10px; border:none; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); }
-  .send-btn:disabled { opacity:0.25; cursor:not-allowed; }
+  .chat-textarea::placeholder { color:#1f1f1f; }
+  .send-btn { width:38px; height:38px; border-radius:0; border:none; background:#fff; color:#000; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1rem; font-weight:800; }
+  .send-btn:disabled { opacity:0.2; cursor:not-allowed; }
+
+  /* PROFILE */
   .profile-page { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
-  .profile-page-header { padding:1.5rem 1.2rem 1rem; }
-  .profile-page-header h2 { font-size:1.3rem; font-weight:800; }
-  .profile-page-header p { color:#333; font-size:0.8rem; margin-top:0.2rem; }
+  .profile-page-header { padding:1.5rem 1.2rem 1rem; border-bottom:1px solid #111; }
+  .profile-page-header h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.05em; }
+  .profile-page-header p { color:#333; font-size:0.72rem; margin-top:0.3rem; text-transform:uppercase; letter-spacing:0.08em; }
   .profile-section { padding:0 1.2rem; margin-bottom:1.2rem; }
-  .profile-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.6rem; }
-  .profile-input-wrap { background:#0f0f0f; border:1px solid #1a1a1a; border-radius:12px; padding:0.75rem 0.9rem; }
-  .profile-input-label { font-size:0.62rem; color:#333; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.35rem; display:block; }
-  .profile-input { background:transparent; border:none; outline:none; color:#e5e7eb; font-size:0.95rem; font-weight:700; font-family:'Inter',sans-serif; width:100%; }
-  .save-btn { width:100%; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; font-weight:700; font-size:0.9rem; border:none; border-radius:14px; padding:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; box-shadow:0 4px 16px rgba(124,58,237,0.3); }
+  .profile-row { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.5rem; }
+  .profile-input-wrap { background:#000; border:1px solid #111; border-radius:0; padding:0.75rem 0.9rem; }
+  .profile-input-label { font-size:0.58rem; color:#333; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:0.35rem; display:block; font-weight:700; }
+  .profile-input { background:transparent; border:none; outline:none; color:#fff; font-size:0.95rem; font-weight:700; font-family:'Inter',sans-serif; width:100%; }
+  .save-btn { width:100%; background:#fff; color:#000; font-weight:800; font-size:0.82rem; border:none; border-radius:0; padding:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; letter-spacing:0.12em; text-transform:uppercase; transition:opacity 0.2s; }
+  .save-btn:hover { opacity:0.85; }
+
   .loading-dots { display:flex; gap:4px; align-items:center; padding:0.4rem 0.2rem; }
-  .dot { width:5px; height:5px; background:#333; border-radius:50%; animation:pulse 1.2s ease infinite; }
+  .dot { width:4px; height:4px; background:#333; border-radius:50%; animation:pulse 1.2s ease infinite; }
   .dot:nth-child(2){animation-delay:0.2s;} .dot:nth-child(3){animation-delay:0.4s;}
-  .cache-stats { font-size:0.65rem; color:#2d2d2d; }
+  .cache-stats { font-size:0.62rem; color:#222; text-transform:uppercase; letter-spacing:0.06em; }
 `;
 
 const GOALS = [
-  {id:"cut",icon:"🔥",name:"Fat Loss",desc:"Lose fat, preserve muscle"},
-  {id:"maintain",icon:"⚖️",name:"Maintenance",desc:"Stay lean & healthy"},
-  {id:"bulk",icon:"💪",name:"Lean Bulk",desc:"Build muscle, minimal fat"},
-  {id:"recomp",icon:"🔄",name:"Recomp",desc:"Lose fat & gain muscle"},
+  {id:"cut",icon:"↓",name:"Fat Loss",desc:"Lose fat, preserve muscle"},
+  {id:"maintain",icon:"—",name:"Maintenance",desc:"Stay lean & healthy"},
+  {id:"bulk",icon:"↑",name:"Lean Bulk",desc:"Build muscle, minimal fat"},
+  {id:"recomp",icon:"⟳",name:"Recomp",desc:"Lose fat & gain muscle"},
 ];
 const GOAL_TARGETS = {
   cut:{calories:1800,protein:145,carbs:160,fat:45},
@@ -552,9 +677,17 @@ export default function App() {
           {tab==="home" && (
             <div className="home">
               <div className="home-hero">
-                <div className="hero-badge">🤖 AI-Powered · Local-First</div>
-                <h1 className="hero-title">Your Smart<br/><span>Fitness Tracker</span></h1>
-                <p className="hero-sub">Track calories, plan your diet, and get AI nutrition advice — all in one place.</p>
+                <div className="hero-badge">⚡ AI-Powered · Local-First</div>
+                <h1 className="hero-title">Track<br/>Every<br/><span>Rep.</span><br/>Eat<br/>Every<br/>Gram.</h1>
+                <p className="hero-sub">Calories · Protein · Macros · Diet Plans</p>
+                <button className="hero-cta" onClick={()=>setTab("tracker")}>Start Tracking →</button>
+              </div>
+              <div className="marquee-wrap">
+                <div className="marquee-track">
+                  {["Fat Loss","Lean Bulk","Maintenance","Recomp","Protein","Calories","Macros","AI Coach","Diet Plans","Fat Loss","Lean Bulk","Maintenance","Recomp","Protein","Calories","Macros","AI Coach","Diet Plans"].map((t,i)=>(
+                    <span key={i} className="marquee-item">{t} <span className="marquee-dot">·</span></span>
+                  ))}
+                </div>
               </div>
 
               <div className="section" style={{marginTop:"1rem"}}>
@@ -589,10 +722,10 @@ export default function App() {
               <div className="section" style={{marginTop:"1.2rem"}}>
                 <p className="section-title">Explore</p>
                 <div className="feature-grid">
-                  {[{icon:"🔥",name:"Calorie Tracker",desc:"Log meals & track macros",color:"purple",page:"tracker"},
-                    {icon:"🥗",name:"Diet Ideas",desc:"Meal plans for your goal",color:"green",page:"diet"},
-                    {icon:"🤖",name:"AI Coach",desc:"Ask nutrition questions",color:"blue",page:"chat"},
-                    {icon:"👤",name:"My Profile",desc:"Set your targets",color:"orange",page:"profile"}].map(f=>(
+                  {[{icon:"▶",name:"Calorie Tracker",desc:"Log meals & track macros",color:"purple",page:"tracker"},
+                    {icon:"▤",name:"Diet Ideas",desc:"Meal plans for your goal",color:"green",page:"diet"},
+                    {icon:"◈",name:"AI Coach",desc:"Ask nutrition questions",color:"blue",page:"chat"},
+                    {icon:"◉",name:"My Profile",desc:"Set your targets",color:"orange",page:"profile"}].map(f=>(
                     <div key={f.name} className={`feat-card ${f.color}`} onClick={()=>setTab(f.page)}>
                       <div className="feat-icon">{f.icon}</div>
                       <div className="feat-name">{f.name}</div>
@@ -697,7 +830,7 @@ export default function App() {
         </div>
 
         <nav className="nav">
-          {[{id:"home",icon:"🏠",label:"Home"},{id:"tracker",icon:"🔥",label:"Tracker"},{id:"diet",icon:"🥗",label:"Diet"},{id:"chat",icon:"🤖",label:"AI"},{id:"profile",icon:"👤",label:"Profile"}].map(t=>(
+          {[{id:"home",icon:"⌂",label:"Home"},{id:"tracker",icon:"◎",label:"Tracker"},{id:"diet",icon:"▤",label:"Diet"},{id:"chat",icon:"◈",label:"AI"},{id:"profile",icon:"◉",label:"Profile"}].map(t=>(
             <button key={t.id} className={`nav-btn ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>
               <span className="nav-icon">{t.icon}</span>
               <span className="nav-label">{t.label}</span>
