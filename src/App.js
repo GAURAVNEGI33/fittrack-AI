@@ -1,141 +1,60 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-// ============================================================
-// 1. PROVIDER CONFIGURATION — edit keys here only
-// ============================================================
 const AI_CONFIG = {
   providers: [
-    {
-      id: "claude",
-      enabled: true,
-      apiKey: "", // leave empty — handled by Anthropic sandbox
-      endpoint: "https://api.anthropic.com/v1/messages",
-    },
-    {
-      id: "gemini",
-      enabled: true,
-      apiKey: "YOUR_GEMINI_API_KEY", // paste your free Gemini key here
-      endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-    },
+    { id: "claude", enabled: true, apiKey: "", endpoint: "https://api.anthropic.com/v1/messages" },
+    { id: "gemini", enabled: true, apiKey: "YOUR_GEMINI_API_KEY", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
   ],
-  retryDelay: 1200,   // ms before retrying
+  retryDelay: 1200,
   maxRetries: 1,
 };
 
-// ============================================================
-// 2. LOCAL NUTRITION DATABASE (no API needed)
-// ============================================================
 const FOOD_DB = {
-  // grains
-  "rice":         { calories:130, protein:2.7, carbs:28, fat:0.3, per:"100g" },
-  "white rice":   { calories:130, protein:2.7, carbs:28, fat:0.3, per:"100g" },
-  "brown rice":   { calories:112, protein:2.6, carbs:24, fat:0.9, per:"100g" },
-  "roti":         { calories:120, protein:3.5, carbs:22, fat:2.5, per:"1 piece" },
-  "chapati":      { calories:120, protein:3.5, carbs:22, fat:2.5, per:"1 piece" },
-  "oats":         { calories:147, protein:5,   carbs:25, fat:2.5, per:"40g dry" },
-  "bread":        { calories:79,  protein:2.7, carbs:15, fat:1,   per:"1 slice" },
-  "brown bread":  { calories:69,  protein:3,   carbs:12, fat:1,   per:"1 slice" },
-  "pasta":        { calories:158, protein:5.8, carbs:31, fat:0.9, per:"100g" },
-  // protein
-  "egg":          { calories:78,  protein:6,   carbs:0.6,fat:5,   per:"1 egg" },
-  "eggs":         { calories:78,  protein:6,   carbs:0.6,fat:5,   per:"1 egg" },
-  "egg white":    { calories:17,  protein:3.6, carbs:0.2,fat:0,   per:"1 egg white" },
-  "egg whites":   { calories:17,  protein:3.6, carbs:0.2,fat:0,   per:"1 egg white" },
-  "chicken breast":{ calories:165,protein:31,  carbs:0,  fat:3.6, per:"100g" },
-  "chicken":      { calories:165, protein:31,  carbs:0,  fat:3.6, per:"100g" },
-  "paneer":       { calories:265, protein:18,  carbs:3.4,fat:20,  per:"100g" },
-  "tuna":         { calories:116, protein:25,  carbs:0,  fat:1,   per:"100g" },
-  "fish":         { calories:136, protein:22,  carbs:0,  fat:5,   per:"100g" },
-  "mutton":       { calories:294, protein:25,  carbs:0,  fat:21,  per:"100g" },
-  "tofu":         { calories:76,  protein:8,   carbs:1.9,fat:4.2, per:"100g" },
-  // dairy
-  "milk":         { calories:61,  protein:3.2, carbs:4.8,fat:3.3, per:"100ml" },
-  "curd":         { calories:60,  protein:3.5, carbs:4.7,fat:3.3, per:"100g" },
-  "yogurt":       { calories:59,  protein:3.5, carbs:5,  fat:3.3, per:"100g" },
-  "greek yogurt": { calories:97,  protein:9,   carbs:3.6,fat:5,   per:"100g" },
-  "whey protein": { calories:120, protein:24,  carbs:3,  fat:2,   per:"1 scoop(30g)" },
-  // legumes
-  "dal":          { calories:116, protein:9,   carbs:20, fat:0.4, per:"100g cooked" },
-  "lentils":      { calories:116, protein:9,   carbs:20, fat:0.4, per:"100g cooked" },
-  "rajma":        { calories:127, protein:8.7, carbs:22, fat:0.5, per:"100g cooked" },
-  "chana":        { calories:164, protein:8.9, carbs:27, fat:2.6, per:"100g cooked" },
-  "peanut butter":{ calories:188, protein:8,   carbs:6,  fat:16,  per:"2 tbsp" },
-  "peanuts":      { calories:166, protein:7,   carbs:6,  fat:14,  per:"30g" },
-  // fruits & veggies
-  "banana":       { calories:89,  protein:1.1, carbs:23, fat:0.3, per:"1 medium" },
-  "apple":        { calories:52,  protein:0.3, carbs:14, fat:0.2, per:"1 medium" },
-  "mango":        { calories:60,  protein:0.8, carbs:15, fat:0.4, per:"100g" },
-  "orange":       { calories:47,  protein:0.9, carbs:12, fat:0.1, per:"1 medium" },
-  "spinach":      { calories:23,  protein:2.9, carbs:3.6,fat:0.4, per:"100g" },
-  "broccoli":     { calories:34,  protein:2.8, carbs:7,  fat:0.4, per:"100g" },
-  "potato":       { calories:77,  protein:2,   carbs:17, fat:0.1, per:"100g" },
-  // other
-  "almonds":      { calories:164, protein:6,   carbs:6,  fat:14,  per:"28g" },
-  "olive oil":    { calories:119, protein:0,   carbs:0,  fat:13.5,per:"1 tbsp" },
-  "butter":       { calories:102, protein:0.1, carbs:0,  fat:11.5,per:"1 tbsp" },
-  "sugar":        { calories:48,  protein:0,   carbs:12, fat:0,   per:"1 tbsp" },
-  "honey":        { calories:64,  protein:0.1, carbs:17, fat:0,   per:"1 tbsp" },
+  "rice":          { calories:130, protein:2.7, carbs:28,  fat:0.3 },
+  "white rice":    { calories:130, protein:2.7, carbs:28,  fat:0.3 },
+  "brown rice":    { calories:112, protein:2.6, carbs:24,  fat:0.9 },
+  "roti":          { calories:120, protein:3.5, carbs:22,  fat:2.5, perPiece:true },
+  "chapati":       { calories:120, protein:3.5, carbs:22,  fat:2.5, perPiece:true },
+  "oats":          { calories:147, protein:5,   carbs:25,  fat:2.5 },
+  "bread":         { calories:79,  protein:2.7, carbs:15,  fat:1,   perPiece:true },
+  "brown bread":   { calories:69,  protein:3,   carbs:12,  fat:1,   perPiece:true },
+  "pasta":         { calories:158, protein:5.8, carbs:31,  fat:0.9 },
+  "egg":           { calories:78,  protein:6,   carbs:0.6, fat:5,   perPiece:true },
+  "eggs":          { calories:78,  protein:6,   carbs:0.6, fat:5,   perPiece:true },
+  "egg white":     { calories:17,  protein:3.6, carbs:0.2, fat:0,   perPiece:true },
+  "egg whites":    { calories:17,  protein:3.6, carbs:0.2, fat:0,   perPiece:true },
+  "chicken breast":{ calories:165, protein:31,  carbs:0,   fat:3.6 },
+  "chicken":       { calories:165, protein:31,  carbs:0,   fat:3.6 },
+  "paneer":        { calories:265, protein:18,  carbs:3.4, fat:20  },
+  "tuna":          { calories:116, protein:25,  carbs:0,   fat:1   },
+  "fish":          { calories:136, protein:22,  carbs:0,   fat:5   },
+  "mutton":        { calories:294, protein:25,  carbs:0,   fat:21  },
+  "tofu":          { calories:76,  protein:8,   carbs:1.9, fat:4.2 },
+  "milk":          { calories:61,  protein:3.2, carbs:4.8, fat:3.3 },
+  "curd":          { calories:60,  protein:3.5, carbs:4.7, fat:3.3 },
+  "yogurt":        { calories:59,  protein:3.5, carbs:5,   fat:3.3 },
+  "greek yogurt":  { calories:97,  protein:9,   carbs:3.6, fat:5   },
+  "whey protein":  { calories:120, protein:24,  carbs:3,   fat:2,   perPiece:true },
+  "dal":           { calories:116, protein:9,   carbs:20,  fat:0.4 },
+  "lentils":       { calories:116, protein:9,   carbs:20,  fat:0.4 },
+  "rajma":         { calories:127, protein:8.7, carbs:22,  fat:0.5 },
+  "chana":         { calories:164, protein:8.9, carbs:27,  fat:2.6 },
+  "peanut butter": { calories:188, protein:8,   carbs:6,   fat:16,  perPiece:true },
+  "peanuts":       { calories:166, protein:7,   carbs:6,   fat:14  },
+  "banana":        { calories:89,  protein:1.1, carbs:23,  fat:0.3, perPiece:true },
+  "apple":         { calories:52,  protein:0.3, carbs:14,  fat:0.2, perPiece:true },
+  "mango":         { calories:60,  protein:0.8, carbs:15,  fat:0.4 },
+  "orange":        { calories:47,  protein:0.9, carbs:12,  fat:0.1, perPiece:true },
+  "spinach":       { calories:23,  protein:2.9, carbs:3.6, fat:0.4 },
+  "broccoli":      { calories:34,  protein:2.8, carbs:7,   fat:0.4 },
+  "potato":        { calories:77,  protein:2,   carbs:17,  fat:0.1 },
+  "almonds":       { calories:164, protein:6,   carbs:6,   fat:14  },
+  "olive oil":     { calories:119, protein:0,   carbs:0,   fat:13.5,perPiece:true },
+  "butter":        { calories:102, protein:0.1, carbs:0,   fat:11.5,perPiece:true },
+  "sugar":         { calories:48,  protein:0,   carbs:12,  fat:0,   perPiece:true },
+  "honey":         { calories:64,  protein:0.1, carbs:17,  fat:0,   perPiece:true },
 };
 
-// ============================================================
-// 3. SIMPLE FOOD DETECTOR
-// ============================================================
-function detectSimpleFoods(input) {
-  const lower = input.toLowerCase();
-  const tokens = lower.split(/[\s,+&]+/).filter(Boolean);
-  const matched = [];
-
-  // Match patterns like: "200g chicken", "2 roti", "150ml milk", "3 eggs"
-  const segmentRegex = /(\d+(?:\.\d+)?)\s*(g|ml|kg|l|pieces?|cups?|tbsp|tsp)?\s+([a-z][a-z\s]*?)(?=\d|,|\+|&|$)/gi;
-  let m;
-  while ((m = segmentRegex.exec(lower)) !== null) {
-    const rawNum = parseFloat(m[1]);
-    const unit = (m[2] || "").toLowerCase().replace(/s$/, ""); // normalize plural
-    const foodRaw = m[3].trim().replace(/\s+/g, " ");
-
-    const words = foodRaw.split(" ");
-    let found = false;
-    // try longest match first (e.g. "chicken breast" before "chicken")
-    for (let len = Math.min(words.length, 3); len >= 1; len--) {
-      const key = words.slice(0, len).join(" ").trim();
-      if (FOOD_DB[key]) {
-        const dbEntry = FOOD_DB[key];
-        let scale = 1;
-
-        if (unit === "g" || unit === "ml") {
-          // ALL db values normalized to per 100g/ml
-          scale = rawNum / 100;
-        } else if (unit === "kg" || unit === "l") {
-          scale = (rawNum * 1000) / 100;
-        } else if (unit === "tbsp") {
-          scale = rawNum * 0.15; // ~15g per tbsp
-        } else if (unit === "tsp") {
-          scale = rawNum * 0.05;
-        } else if (unit === "cup") {
-          scale = rawNum * 2.4; // ~240g per cup
-        } else {
-          // no unit = count (2 eggs, 3 roti)
-          scale = rawNum;
-        }
-
-        matched.push({
-          key,
-          qty: `${rawNum}${unit || "x"}`,
-          scale,
-          data: dbEntry
-        });
-        found = true;
-        break;
-      }
-    }
-  }
-
-  const nonNumericTokens = tokens.filter(t => isNaN(parseFloat(t))).length;
-  const isSimple = matched.length > 0 && (matched.length / Math.max(nonNumericTokens, 1)) >= 0.4;
-  return { isSimple, matched };
-}
-
-// Sanity check — cap unrealistic values per item
 function sanitizeMacros(item) {
   return {
     ...item,
@@ -146,32 +65,59 @@ function sanitizeMacros(item) {
   };
 }
 
-// Sanity check full meal result
 function sanitizeResult(result) {
   if (!result || !result.total) return result;
   const items = (result.items || []).map(sanitizeMacros);
   const total = items.reduce((acc, i) => ({
     calories: acc.calories + i.calories,
-    protein:  Math.round((acc.protein  + i.protein)  * 10) / 10,
-    carbs:    Math.round((acc.carbs    + i.carbs)    * 10) / 10,
-    fat:      Math.round((acc.fat      + i.fat)      * 10) / 10,
-  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
-
-  // if total calories still unrealistic for a single meal (>4000) flag it
+    protein:  Math.round((acc.protein + i.protein) * 10) / 10,
+    carbs:    Math.round((acc.carbs   + i.carbs)   * 10) / 10,
+    fat:      Math.round((acc.fat     + i.fat)     * 10) / 10,
+  }), { calories:0, protein:0, carbs:0, fat:0 });
   if (total.calories > 4000) {
     total.calories = Math.round(total.calories / 10);
     total.protein  = Math.round(total.protein  / 10 * 10) / 10;
     total.carbs    = Math.round(total.carbs    / 10 * 10) / 10;
     total.fat      = Math.round(total.fat      / 10 * 10) / 10;
   }
-
   return { ...result, items, total };
+}
+
+function detectSimpleFoods(input) {
+  const lower = input.toLowerCase();
+  const tokens = lower.split(/[\s,+&]+/).filter(Boolean);
+  const matched = [];
+  const segmentRegex = /(\d+(?:\.\d+)?)\s*(g|ml|kg|l|pieces?|cups?|tbsp|tsp)?\s+([a-z][a-z\s]*?)(?=\d|,|\+|&|$)/gi;
+  let m;
+  while ((m = segmentRegex.exec(lower)) !== null) {
+    const rawNum = parseFloat(m[1]);
+    const unit = (m[2] || "").toLowerCase().replace(/s$/, "");
+    const foodRaw = m[3].trim().replace(/\s+/g, " ");
+    const words = foodRaw.split(" ");
+    for (let len = Math.min(words.length, 3); len >= 1; len--) {
+      const key = words.slice(0, len).join(" ").trim();
+      if (FOOD_DB[key]) {
+        const db = FOOD_DB[key];
+        let scale = 1;
+        if (unit === "g" || unit === "ml") scale = rawNum / 100;
+        else if (unit === "kg" || unit === "l") scale = (rawNum * 1000) / 100;
+        else if (unit === "tbsp") scale = rawNum * 0.15;
+        else if (unit === "tsp") scale = rawNum * 0.05;
+        else if (unit === "cup") scale = rawNum * 2.4;
+        else scale = db.perPiece ? rawNum : rawNum / 100;
+        matched.push({ key, qty: `${rawNum}${unit || "x"}`, scale, data: db });
+        break;
+      }
+    }
+  }
+  const nonNumericTokens = tokens.filter(t => isNaN(parseFloat(t))).length;
+  const isSimple = matched.length > 0 && (matched.length / Math.max(nonNumericTokens, 1)) >= 0.4;
+  return { isSimple, matched };
 }
 
 function buildLocalResult(input, matched) {
   const items = matched.map(m => sanitizeMacros({
-    name:     m.key,
-    qty:      m.qty,
+    name: m.key, qty: m.qty,
     calories: m.data.calories * m.scale,
     protein:  m.data.protein  * m.scale,
     carbs:    m.data.carbs    * m.scale,
@@ -182,120 +128,78 @@ function buildLocalResult(input, matched) {
     protein:  Math.round((acc.protein + i.protein) * 10) / 10,
     carbs:    Math.round((acc.carbs   + i.carbs)   * 10) / 10,
     fat:      Math.round((acc.fat     + i.fat)     * 10) / 10,
-  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+  }), { calories:0, protein:0, carbs:0, fat:0 });
   return sanitizeResult({ name: input, items, total, tip: "Estimated from local database — values are approximate.", source: "local" });
 }
 
-
-
-// ============================================================
-// 4. CACHE SYSTEM
-// ============================================================
 const cache = new Map();
-function getCached(key) { return cache.get(key.trim().toLowerCase()) || null; }
-function setCache(key, val) { cache.set(key.trim().toLowerCase(), val); }
+function getCached(key) { try { return cache.get(key.trim().toLowerCase()) || null; } catch { return null; } }
+function setCache(key, val) { try { cache.set(key.trim().toLowerCase(), val); } catch {} }
 
-// ============================================================
-// 5. PROVIDER CALL FUNCTIONS
-// ============================================================
 async function callClaude(prompt, systemPrompt) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 800,
-      stream: false,
-      system: systemPrompt,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 800, stream: false, system: systemPrompt, messages: [{ role: "user", content: prompt }] }),
   });
-  if (!res.ok) throw new Error(`Claude HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`Claude ${res.status}`);
   const data = await res.json();
   return data.content.map(b => b.text || "").join("");
 }
 
 async function callGemini(prompt, systemPrompt) {
   const key = AI_CONFIG.providers.find(p => p.id === "gemini")?.apiKey;
-  if (!key || key === "YOUR_GEMINI_API_KEY") throw new Error("Gemini key not set");
+  if (!key || key === "YOUR_GEMINI_API_KEY") throw new Error("No Gemini key");
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: systemPrompt }] },
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
+    body: JSON.stringify({ system_instruction: { parts: [{ text: systemPrompt }] }, contents: [{ parts: [{ text: prompt }] }] }),
   });
-  if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`Gemini ${res.status}`);
   const data = await res.json();
   return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
-// ============================================================
-// 6. MAIN callAI — provider fallback chain
-// ============================================================
 async function callAI(prompt, systemPrompt, retries = 0) {
   const providers = AI_CONFIG.providers.filter(p => p.enabled);
-  let lastError;
-
   for (const provider of providers) {
     try {
-      let text = "";
-      if (provider.id === "claude") text = await callClaude(prompt, systemPrompt);
-      else if (provider.id === "gemini") text = await callGemini(prompt, systemPrompt);
-      return text;
+      if (provider.id === "claude") return await callClaude(prompt, systemPrompt);
+      if (provider.id === "gemini") return await callGemini(prompt, systemPrompt);
     } catch (err) {
-      lastError = err;
       if (retries < AI_CONFIG.maxRetries) {
         await new Promise(r => setTimeout(r, AI_CONFIG.retryDelay));
         return callAI(prompt, systemPrompt, retries + 1);
       }
-      // try next provider
     }
   }
-  throw lastError || new Error("All providers failed");
+  throw new Error("All providers failed");
 }
 
-// ============================================================
-// 7. MEAL ANALYSIS — local first, AI fallback
-// ============================================================
 const MEAL_SYSTEM = `Return ONLY a raw JSON object — no markdown, no backticks, no explanation.
 Format: {"name":"meal name","items":[{"name":"food","qty":"amount","calories":0,"protein":0,"carbs":0,"fat":0}],"total":{"calories":0,"protein":0,"carbs":0,"fat":0},"tip":"short practical tip"}`;
 
 async function analyzeMeal(input) {
-  const cacheKey = input;
-  const cached = getCached(cacheKey);
+  const cached = getCached(input);
   if (cached) return { ...cached, source: "cache" };
-
   const { isSimple, matched } = detectSimpleFoods(input);
   if (isSimple) {
     const result = buildLocalResult(input, matched);
-    setCache(cacheKey, result);
+    setCache(input, result);
     return result;
   }
-
   try {
     const raw = await callAI(`Analyze this meal: ${input}`, MEAL_SYSTEM);
     const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
-    parsed.source = "ai";
-    setCache(cacheKey, parsed);
-    return parsed;
+    const safe = sanitizeResult({ ...parsed, source: "ai" });
+    setCache(input, safe);
+    return safe;
   } catch {
-    // graceful fallback — partial local match or estimate
     if (matched.length > 0) return buildLocalResult(input, matched);
-    return {
-      name: input,
-      items: [{ name: input, qty: "1 serving", calories: 350, protein: 15, carbs: 40, fat: 12 }],
-      total: { calories: 350, protein: 15, carbs: 40, fat: 12 },
-      tip: "Could not connect to AI. Showing a rough estimate — log more specific items for accuracy.",
-      source: "fallback",
-    };
+    return sanitizeResult({ name: input, items: [{ name: input, qty: "1 serving", calories: 350, protein: 15, carbs: 40, fat: 12 }], total: { calories: 350, protein: 15, carbs: 40, fat: 12 }, tip: "Could not analyze. Showing rough estimate.", source: "fallback" });
   }
 }
 
-// ============================================================
-// 8. CHAT — AI with graceful fallback
-// ============================================================
 const CHAT_FALLBACKS = [
   "Focus on hitting your protein target first — everything else falls into place.",
   "Stay consistent. Results come from weeks of effort, not single perfect days.",
@@ -305,18 +209,23 @@ const CHAT_FALLBACKS = [
 ];
 
 async function askCoach(userMessage, history, profile) {
-  const system = `You are FitTrack AI, a concise fitness and nutrition coach. User: ${profile.age}y, ${profile.weight}kg, ${profile.height}cm, Activity: ${profile.activity}. Targets: ${profile.calories} kcal, ${profile.protein}g protein. Reply in 2-4 sentences max. Be practical and specific.`;
+  const system = `You are FitTrack AI, a friendly fitness and nutrition coach chatbot.
+User profile: ${profile.age}y old, ${profile.weight}kg, ${profile.height}cm, Activity: ${profile.activity}. Daily targets: ${profile.calories} kcal, ${profile.protein}g protein.
+
+STRICT RULES:
+- You are a CHATBOT. Reply conversationally like a real coach.
+- NEVER return JSON, tables, or structured data.
+- NEVER analyze meals or calculate calories unless the user EXPLICITLY asks.
+- For greetings like "hi", "hello", "hey" — just greet back warmly and ask how you can help.
+- For fitness/nutrition questions — give short, practical advice in 2-4 sentences.
+- For meal logging — tell the user to use the Tracker page instead.
+- Always reply in plain conversational English.
+- Never start your reply with nutrition data out of nowhere.`;
   const prompt = history.slice(-6).map(m => `${m.role === "ai" ? "Assistant" : "User"}: ${m.text}`).join("\n") + `\nUser: ${userMessage}`;
-  try {
-    return await callAI(prompt, system);
-  } catch {
-    return CHAT_FALLBACKS[Math.floor(Math.random() * CHAT_FALLBACKS.length)];
-  }
+  try { return await callAI(prompt, system); }
+  catch { return CHAT_FALLBACKS[Math.floor(Math.random() * CHAT_FALLBACKS.length)]; }
 }
 
-// ============================================================
-// CSS
-// ============================================================
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -337,7 +246,6 @@ const css = `
   .page { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
   .page::-webkit-scrollbar { width:3px; }
   .page::-webkit-scrollbar-thumb { background:#1a1a1a; border-radius:99px; }
-  /* HOME */
   .home { padding:0 0 2rem; animation:fadeUp 0.5s ease both; }
   .home-hero { padding:2rem 1.2rem 1.5rem; background:linear-gradient(180deg,#0d0d1a 0%,#060606 100%); position:relative; overflow:hidden; }
   .home-hero::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(139,92,246,0.12) 0%,transparent 70%); border-radius:50%; }
@@ -365,7 +273,6 @@ const css = `
   .feat-name { font-size:0.82rem; font-weight:700; color:#e5e7eb; margin-bottom:0.2rem; }
   .feat-desc { font-size:0.68rem; color:#374151; line-height:1.5; }
   .feat-arrow { position:absolute; bottom:0.8rem; right:0.9rem; color:#222; font-size:0.75rem; }
-  /* TRACKER */
   .tracker { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
   .tracker-header { padding:1.5rem 1.2rem 1rem; border-bottom:1px solid #0f0f0f; }
   .tracker-header h2 { font-size:1.3rem; font-weight:800; }
@@ -402,7 +309,6 @@ const css = `
   .src-fallback { background:rgba(245,158,11,0.1); color:#f59e0b; }
   .meal-entry-macros { display:flex; gap:0.5rem; flex-wrap:wrap; }
   .macro-tag { padding:0.18rem 0.55rem; border-radius:50px; font-size:0.68rem; font-weight:700; }
-  /* DIET */
   .diet { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
   .diet-header { padding:1.5rem 1.2rem 1rem; }
   .diet-header h2 { font-size:1.3rem; font-weight:800; }
@@ -424,7 +330,6 @@ const css = `
   .diet-footer { padding:0.7rem 1.1rem; border-top:1px solid #111; display:flex; justify-content:space-between; }
   .diet-macro-val { font-size:0.82rem; font-weight:700; text-align:center; }
   .diet-macro-lbl { font-size:0.6rem; color:#333; text-align:center; }
-  /* CHAT */
   .chat-outer { display:flex; flex-direction:column; flex:1; overflow:hidden; }
   .chat-header { flex-shrink:0; padding:1rem 1.2rem; border-bottom:1px solid #0f0f0f; display:flex; align-items:center; gap:0.7rem; }
   .chat-avatar { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#7c3aed,#2563eb); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
@@ -448,7 +353,6 @@ const css = `
   .chat-textarea::placeholder { color:#222; }
   .send-btn { width:38px; height:38px; border-radius:10px; border:none; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); }
   .send-btn:disabled { opacity:0.25; cursor:not-allowed; }
-  /* PROFILE */
   .profile-page { padding:0 0 2rem; animation:fadeUp 0.4s ease both; }
   .profile-page-header { padding:1.5rem 1.2rem 1rem; }
   .profile-page-header h2 { font-size:1.3rem; font-weight:800; }
@@ -459,16 +363,10 @@ const css = `
   .profile-input-label { font-size:0.62rem; color:#333; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.35rem; display:block; }
   .profile-input { background:transparent; border:none; outline:none; color:#e5e7eb; font-size:0.95rem; font-weight:700; font-family:'Inter',sans-serif; width:100%; }
   .save-btn { width:100%; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; font-weight:700; font-size:0.9rem; border:none; border-radius:14px; padding:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; box-shadow:0 4px 16px rgba(124,58,237,0.3); }
-  /* provider status */
-  .provider-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.6rem; }
-  .provider-pill { display:flex; align-items:center; gap:0.35rem; background:#0f0f0f; border:1px solid #1a1a1a; border-radius:50px; padding:0.3rem 0.75rem; font-size:0.7rem; color:#444; }
-  .dot-on { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; }
-  .dot-off { width:6px; height:6px; border-radius:50%; background:#333; flex-shrink:0; }
-  /* misc */
   .loading-dots { display:flex; gap:4px; align-items:center; padding:0.4rem 0.2rem; }
   .dot { width:5px; height:5px; background:#333; border-radius:50%; animation:pulse 1.2s ease infinite; }
   .dot:nth-child(2){animation-delay:0.2s;} .dot:nth-child(3){animation-delay:0.4s;}
-  .cache-stats { display:flex; gap:0.5rem; align-items:center; font-size:0.65rem; color:#2d2d2d; }
+  .cache-stats { font-size:0.65rem; color:#2d2d2d; }
 `;
 
 const GOALS = [
@@ -505,28 +403,23 @@ const ProgressBar = ({val,max,color}) => (
     <div style={{height:"100%",borderRadius:99,background:color,width:`${Math.min((val/max)*100,100)}%`,transition:"width 0.5s ease"}}/>
   </div>
 );
+const srcLabel = s => ({local:"Local DB",cache:"Cached",ai:"AI",fallback:"Est."}[s]||"");
+const srcClass = s => ({local:"src-local",cache:"src-cache",ai:"src-ai",fallback:"src-fallback"}[s]||"");
 
-const srcLabel = s => ({ local:"Local DB", cache:"Cached", ai:"AI", fallback:"Est." }[s] || "");
-const srcClass = s => ({ local:"src-local", cache:"src-cache", ai:"src-ai", fallback:"src-fallback" }[s] || "");
-
-// ── TRACKER PAGE ──
 const TrackerPage = ({ daily, targets, meals, logLoading, onLog }) => {
   const [input, setInput] = useState("");
-  const handleLog = () => { if (!input.trim() || logLoading) return; onLog(input); setInput(""); };
+  const handleLog = () => { if (!input.trim()||logLoading) return; onLog(input); setInput(""); };
   const circ = 2*Math.PI*54;
-  const dash = circ - (Math.min(daily.calories/targets.calories,1))*circ;
+  const dash = circ-(Math.min(daily.calories/targets.calories,1))*circ;
   return (
     <div className="tracker">
-      <div className="tracker-header"><h2>Calorie Tracker</h2><p>Log meals — simple foods use local DB, no API call</p></div>
+      <div className="tracker-header"><h2>Calorie Tracker</h2><p>Log meals — simple foods use local DB instantly</p></div>
       <div className="macro-ring">
         <div className="ring-center">
           <svg className="ring-svg" width="140" height="140" viewBox="0 0 140 140">
             <circle cx="70" cy="70" r="54" fill="none" stroke="#111" strokeWidth="10"/>
-            <circle cx="70" cy="70" r="54" fill="none" stroke="url(#g1)" strokeWidth="10" strokeLinecap="round"
-              strokeDasharray={circ} strokeDashoffset={dash} style={{transition:"stroke-dashoffset 0.8s ease"}}/>
-            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#7c3aed"/><stop offset="100%" stopColor="#2563eb"/>
-            </linearGradient></defs>
+            <circle cx="70" cy="70" r="54" fill="none" stroke="url(#g1)" strokeWidth="10" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={dash} style={{transition:"stroke-dashoffset 0.8s ease"}}/>
+            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7c3aed"/><stop offset="100%" stopColor="#2563eb"/></linearGradient></defs>
           </svg>
           <div className="ring-text"><span className="ring-cal">{daily.calories}</span><span className="ring-lbl">/ {targets.calories} kcal</span></div>
         </div>
@@ -546,9 +439,9 @@ const TrackerPage = ({ daily, targets, meals, logLoading, onLog }) => {
         <textarea className="log-textarea" rows={3} value={input}
           onChange={e=>setInput(e.target.value)}
           onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleLog();}}}
-          placeholder="e.g. 3 eggs + 2 roti + banana  (simple foods use local DB instantly)"/>
+          placeholder="e.g. 200g chicken + 150g rice + 2 roti"/>
         <div className="log-input-footer">
-          <div className="cache-stats">⚡ {cache.size} cached · {Object.keys(FOOD_DB).length} local foods</div>
+          <span className="cache-stats">{meals.length} meal{meals.length!==1?"s":""} logged</span>
           <button className="btn-primary btn-sm" onClick={handleLog} disabled={logLoading||!input.trim()}>
             {logLoading?"Analyzing...":"Log Meal ⚡"}
           </button>
@@ -556,7 +449,7 @@ const TrackerPage = ({ daily, targets, meals, logLoading, onLog }) => {
         {logLoading && <div style={{marginTop:"0.5rem"}}><LoadingDots/></div>}
       </div>
       <div className="meals-list">
-        {meals.length===0 && <p style={{color:"#222",fontSize:"0.8rem",textAlign:"center",padding:"1rem 0"}}>No meals logged yet.</p>}
+        {meals.length===0 && <p style={{color:"#222",fontSize:"0.8rem",textAlign:"center",padding:"1rem 0"}}>No meals logged yet. Add your first meal above!</p>}
         {meals.map((meal,i)=>(
           <div key={i} className="meal-entry">
             <div className="meal-entry-top">
@@ -571,7 +464,7 @@ const TrackerPage = ({ daily, targets, meals, logLoading, onLog }) => {
               <span className="macro-tag" style={{background:"rgba(16,185,129,0.1)",color:"#10b981"}}>💪 {meal.total.protein}g</span>
               <span className="macro-tag" style={{background:"rgba(167,139,250,0.1)",color:"#a78bfa"}}>🍞 {meal.total.carbs}g</span>
             </div>
-            {meal.tip && <p style={{fontSize:"0.72rem",color:"#2d2d2d",marginTop:"0.5rem"}}>💡 {meal.tip}</p>}
+            {meal.tip&&<p style={{fontSize:"0.72rem",color:"#2d2d2d",marginTop:"0.5rem"}}>💡 {meal.tip}</p>}
           </div>
         ))}
       </div>
@@ -579,7 +472,6 @@ const TrackerPage = ({ daily, targets, meals, logLoading, onLog }) => {
   );
 };
 
-// ── CHAT PAGE ──
 const ChatPage = ({ chatMsgs, chatLoading, onSend }) => {
   const [input, setInput] = useState("");
   const endRef = useRef();
@@ -589,7 +481,7 @@ const ChatPage = ({ chatMsgs, chatLoading, onSend }) => {
     <div className="chat-outer">
       <div className="chat-header">
         <div className="chat-avatar">🤖</div>
-        <div className="chat-header-text"><h3>FitTrack AI</h3><p>Nutrition & fitness coach</p></div>
+        <div className="chat-header-text"><h3>FitTrack AI</h3><p>Your personal fitness coach</p></div>
         <div className="online-dot"/>
       </div>
       <div className="messages-wrap">
@@ -599,7 +491,7 @@ const ChatPage = ({ chatMsgs, chatLoading, onSend }) => {
             <span className="bubble-time">{m.time}</span>
           </div>
         ))}
-        {chatLoading && <div className="bubble-wrap ai"><div className="bubble ai"><LoadingDots/></div></div>}
+        {chatLoading&&<div className="bubble-wrap ai"><div className="bubble ai"><LoadingDots/></div></div>}
         <div ref={endRef}/>
       </div>
       <div className="chat-input-bar">
@@ -607,7 +499,7 @@ const ChatPage = ({ chatMsgs, chatLoading, onSend }) => {
           <textarea className="chat-textarea" rows={1} value={input}
             onChange={e=>setInput(e.target.value)}
             onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleSend();}}}
-            placeholder="Ask about nutrition, workouts, diet..."/>
+            placeholder="Ask about nutrition, workouts..."/>
         </div>
         <button className="send-btn" onClick={handleSend} disabled={chatLoading||!input.trim()}>➤</button>
       </div>
@@ -615,7 +507,6 @@ const ChatPage = ({ chatMsgs, chatLoading, onSend }) => {
   );
 };
 
-// ── MAIN APP ──
 export default function App() {
   const [tab, setTab] = useState("home");
   const [goal, setGoal] = useState("bulk");
@@ -624,7 +515,7 @@ export default function App() {
   const [logLoading, setLogLoading] = useState(false);
   const [meals, setMeals] = useState([]);
   const [daily, setDaily] = useState({calories:0,protein:0,carbs:0,fat:0});
-  const [chatMsgs, setChatMsgs] = useState([{role:"ai",time:nowStr(),text:"Hey! 👋 I'm FitTrack AI.\n\nSimple foods (eggs, rice, roti) are calculated instantly from my local database — no API needed.\n\nFor complex meals or coaching questions, I'll use AI. Ask me anything!"}]);
+  const [chatMsgs, setChatMsgs] = useState([{role:"ai",time:nowStr(),text:"Hey! 👋 I'm FitTrack AI — your personal fitness coach. Ask me anything about nutrition, workouts, or your diet!"}]);
   const [chatLoading, setChatLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const targets = GOAL_TARGETS[goal];
@@ -635,12 +526,12 @@ export default function App() {
     setMeals(prev=>[...prev,{...result,time:nowStr()}]);
     setDaily(d=>({
       calories: d.calories+result.total.calories,
-      protein: Math.round((d.protein+result.total.protein)*10)/10,
-      carbs: Math.round((d.carbs+result.total.carbs)*10)/10,
-      fat: Math.round((d.fat+result.total.fat)*10)/10,
+      protein:  Math.round((d.protein+result.total.protein)*10)/10,
+      carbs:    Math.round((d.carbs+result.total.carbs)*10)/10,
+      fat:      Math.round((d.fat+result.total.fat)*10)/10,
     }));
     setLogLoading(false);
-  }, []);
+  },[]);
 
   const sendChat = useCallback(async (text) => {
     setChatLoading(true);
@@ -648,25 +539,24 @@ export default function App() {
     const reply = await askCoach(text, chatMsgs, profile);
     setChatMsgs(prev=>[...prev,{role:"ai",time:nowStr(),text:reply}]);
     setChatLoading(false);
-  }, [chatMsgs, profile]);
+  },[chatMsgs,profile]);
 
   const filteredDiets = dietFilter==="all" ? DIET_PLANS : DIET_PLANS.filter(d=>d.goal===dietFilter);
-  const geminiKey = AI_CONFIG.providers.find(p=>p.id==="gemini")?.apiKey;
-  const geminiOn = geminiKey && geminiKey !== "YOUR_GEMINI_API_KEY";
 
   return (
     <>
       <style>{css}</style>
       <div className="app">
         <div className="page">
-          {/* HOME */}
+
           {tab==="home" && (
             <div className="home">
               <div className="home-hero">
                 <div className="hero-badge">🤖 AI-Powered · Local-First</div>
                 <h1 className="hero-title">Your Smart<br/><span>Fitness Tracker</span></h1>
-                <p className="hero-sub">Tracks calories locally for common foods. Uses AI only when needed. Auto-switches providers if one fails.</p>
+                <p className="hero-sub">Track calories, plan your diet, and get AI nutrition advice — all in one place.</p>
               </div>
+
               <div className="section" style={{marginTop:"1rem"}}>
                 <p className="section-title">Your Goal</p>
                 <div className="goal-grid">
@@ -679,15 +569,7 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              <div className="section" style={{marginTop:"1.2rem"}}>
-                <p className="section-title">AI Providers</p>
-                <div className="provider-row">
-                  <div className="provider-pill"><div className="dot-on"/>Claude (active)</div>
-                  <div className="provider-pill"><div className={geminiOn?"dot-on":"dot-off"}/>{geminiOn?"Gemini (active)":"Gemini (add key)"}</div>
-                  <div className="provider-pill"><div className="dot-on"/>Local DB</div>
-                  <div className="provider-pill"><div className="dot-on"/>Cache ({cache.size})</div>
-                </div>
-              </div>
+
               <div className="section" style={{marginTop:"1.2rem"}}>
                 <p className="section-title">Today's Progress</p>
                 <div style={{background:"#0f0f0f",border:"1px solid #1a1a1a",borderRadius:16,padding:"1rem"}}>
@@ -703,6 +585,7 @@ export default function App() {
                   ))}
                 </div>
               </div>
+
               <div className="section" style={{marginTop:"1.2rem"}}>
                 <p className="section-title">Explore</p>
                 <div className="feature-grid">
@@ -805,13 +688,6 @@ export default function App() {
                 </div>
               </div>
               <div className="profile-section">
-                <p className="section-title" style={{marginBottom:"0.75rem"}}>AI Provider Config</p>
-                <div className="profile-input-wrap" style={{marginBottom:"0.6rem"}}>
-                  <label className="profile-input-label">Gemini API Key</label>
-                  <input className="profile-input" type="password" placeholder="Paste your free Gemini key here"
-                    defaultValue={geminiOn ? geminiKey : ""}
-                    onChange={e=>{ const p=AI_CONFIG.providers.find(x=>x.id==="gemini"); if(p) p.apiKey=e.target.value; }}/>
-                </div>
                 <button className="save-btn" onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),2000);}}>
                   {saved?"✓ Saved!":"Save Profile"}
                 </button>
