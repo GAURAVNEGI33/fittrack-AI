@@ -692,76 +692,124 @@ export default function App() {
 
           {/* HOME */}
           {tab==="home"&&(
-            <div className="home" style={{display:"flex",flexDirection:"column",height:"100%",padding:"0"}}>
+            <div className="home" style={{padding:0}}>
 
-              {/* TOP BAR */}
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"1.5rem 1.2rem 0"}}>
-                <div>
-                  <p style={{fontSize:"0.62rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.15em",fontWeight:700}}>
+              {/* HERO SECTION — full width cinematic */}
+              <div style={{
+                position:"relative",
+                height:"100vw",
+                maxHeight:"480px",
+                overflow:"hidden",
+                background:"#000",
+              }}>
+                {/* BG IMAGE */}
+                <img
+                  src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800"
+                  alt="gym"
+                  style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center",opacity:0.45,display:"block"}}
+                />
+                {/* DARK OVERLAY */}
+                <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 60%, #000 100%)"}}/>
+
+                {/* CONTENT OVER IMAGE */}
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",justifyContent:"flex-end",padding:"1.5rem 1.2rem 2rem"}}>
+                  {/* streak top right */}
+                  <div style={{position:"absolute",top:"1.2rem",right:"1.2rem",textAlign:"center",background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.15)",padding:"0.5rem 0.8rem",backdropFilter:"blur(8px)"}}>
+                    <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1.6rem",lineHeight:1,color:"#fff"}}>{streak}</div>
+                    <div style={{fontSize:"0.5rem",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:700}}>Streak</div>
+                    <div style={{display:"flex",gap:"2px",marginTop:"0.3rem"}}>
+                      {WEEK_DAYS.map((d,i)=>(
+                        <div key={i} style={{width:"13px",height:"13px",background:doneDays[i]?"#fff":"rgba(255,255,255,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.38rem",color:doneDays[i]?"#000":"rgba(255,255,255,0.3)",fontWeight:700}}>{d}</div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* GREETING */}
+                  <p style={{fontSize:"0.62rem",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",letterSpacing:"0.2em",fontWeight:700,marginBottom:"0.4rem"}}>
                     {new Date().getHours()<12?"Good Morning":new Date().getHours()<17?"Good Afternoon":"Good Evening"}
                   </p>
-                  <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"2rem",letterSpacing:"0.05em",lineHeight:1,marginTop:"0.1rem"}}>
-                    FITTRACK <span style={{WebkitTextFillColor:"transparent",WebkitTextStroke:"1px #fff"}}>AI</span>
+
+                  {/* BOLD QUOTE */}
+                  <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"3.2rem",lineHeight:0.92,letterSpacing:"0.02em",marginBottom:"0.8rem",color:"#fff"}}>
+                    FUEL<br/>YOUR<br/><span style={{WebkitTextFillColor:"transparent",WebkitTextStroke:"1.5px #fff"}}>GRIND.</span>
                   </h1>
+                  <p style={{fontSize:"0.68rem",color:"rgba(255,255,255,0.35)",textTransform:"uppercase",letterSpacing:"0.18em",fontWeight:600,marginBottom:"1.2rem"}}>
+                    Track every rep. Eat every gram.
+                  </p>
                 </div>
-                <div style={{textAlign:"center",background:"#0a0a0a",border:"1px solid #1a1a1a",padding:"0.5rem 0.8rem"}}>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1.6rem",lineHeight:1,color:"#fff"}}>{streak}</div>
-                  <div style={{fontSize:"0.55rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:700}}>Streak</div>
-                  <div style={{display:"flex",gap:"2px",marginTop:"0.3rem"}}>
-                    {WEEK_DAYS.map((d,i)=>(
-                      <div key={i} style={{width:"14px",height:"14px",background:doneDays[i]?"#fff":"#111",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.4rem",color:doneDays[i]?"#000":"#333",fontWeight:700}}>{d}</div>
+              </div>
+
+              {/* BUTTONS SECTION */}
+              <div style={{padding:"1.2rem",display:"flex",flexDirection:"column",gap:"0.5rem",background:"#000"}}>
+
+                {/* LOG MEAL — primary */}
+                <button className="hero-cta" style={{width:"100%",justifyContent:"center",fontSize:"0.82rem"}} onClick={()=>navigate("tracker")}>
+                  LOG MEAL →
+                </button>
+
+                {/* 2 GRID BUTTONS */}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
+                  <button style={{background:"transparent",border:"1px solid #222",color:"#fff",padding:"0.8rem",fontFamily:"'Inter',sans-serif",fontSize:"0.72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",cursor:"pointer",transition:"all 0.2s"}}
+                    onClick={()=>navigate("diet")} onMouseOver={e=>e.target.style.borderColor="#fff"} onMouseOut={e=>e.target.style.borderColor="#222"}>
+                    ▤ Diet Plans
+                  </button>
+                  <button style={{background:"transparent",border:"1px solid #222",color:"#fff",padding:"0.8rem",fontFamily:"'Inter',sans-serif",fontSize:"0.72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",cursor:"pointer",transition:"all 0.2s"}}
+                    onClick={()=>navigate("chat")} onMouseOver={e=>e.target.style.borderColor="#fff"} onMouseOut={e=>e.target.style.borderColor="#222"}>
+                    ◈ AI Coach
+                  </button>
+                </div>
+
+                <button style={{background:"transparent",border:"1px solid #222",color:"#fff",padding:"0.8rem",fontFamily:"'Inter',sans-serif",fontSize:"0.72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",cursor:"pointer",transition:"all 0.2s",width:"100%"}}
+                  onClick={()=>navigate("profile")} onMouseOver={e=>e.target.style.borderColor="#fff"} onMouseOut={e=>e.target.style.borderColor="#222"}>
+                  ◉ My Profile
+                </button>
+              </div>
+
+              {/* TODAY'S PROGRESS */}
+              <div style={{padding:"0 1.2rem"}}>
+                <p className="section-title">Today's Progress</p>
+                <div style={{background:"#0a0a0a",border:"1px solid #111",padding:"1rem",marginBottom:"0.5rem"}}>
+                  {/* Calorie ring small */}
+                  <div style={{display:"flex",alignItems:"center",gap:"1rem",marginBottom:"0.8rem"}}>
+                    <div style={{position:"relative",width:"60px",height:"60px",flexShrink:0}}>
+                      <svg style={{transform:"rotate(-90deg)"}} width="60" height="60" viewBox="0 0 60 60">
+                        <circle cx="30" cy="30" r="22" fill="none" stroke="#111" strokeWidth="5"/>
+                        <circle cx="30" cy="30" r="22" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="square"
+                          strokeDasharray={2*Math.PI*22}
+                          strokeDashoffset={2*Math.PI*22-(Math.min(daily.calories/targets.calories,1))*(2*Math.PI*22)}
+                          style={{transition:"stroke-dashoffset 0.8s ease"}}/>
+                      </svg>
+                      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                        <span style={{fontSize:"0.55rem",fontWeight:800,color:"#fff"}}>{Math.round((daily.calories/targets.calories)*100)}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1.8rem",lineHeight:1,letterSpacing:"0.05em"}}>{daily.calories}<span style={{fontSize:"0.7rem",color:"#333",fontWeight:400,letterSpacing:"0.08em"}}> kcal</span></div>
+                      <div style={{fontSize:"0.62rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.08em"}}>{targets.calories-daily.calories>0?`${targets.calories-daily.calories} remaining`:"Goal reached!"}</div>
+                    </div>
+                  </div>
+                  {/* macros */}
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"0.5rem"}}>
+                    {[{l:"Protein",v:daily.protein,m:targets.protein,u:"g",c:"#fff"},
+                      {l:"Carbs",v:daily.carbs,m:targets.carbs,u:"g",c:"#888"},
+                      {l:"Fat",v:daily.fat,m:targets.fat,u:"g",c:"#555"}].map(m=>(
+                      <div key={m.l}>
+                        <div style={{fontSize:"0.9rem",fontWeight:800,color:m.c}}>{m.v}{m.u}</div>
+                        <div style={{fontSize:"0.55rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.08em",marginTop:"0.1rem"}}>{m.l}</div>
+                        <div style={{height:"2px",background:"#111",marginTop:"0.4rem"}}>
+                          <div style={{height:"100%",background:m.c,width:`${Math.min((m.v/m.m)*100,100)}%`,transition:"width 0.5s ease"}}/>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* BIG CALORIE RING */}
-              <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem 1.2rem 1rem"}}>
-                <div style={{position:"relative",width:"180px",height:"180px"}}>
-                  <svg style={{transform:"rotate(-90deg)"}} width="180" height="180" viewBox="0 0 180 180">
-                    <circle cx="90" cy="90" r="70" fill="none" stroke="#111" strokeWidth="12"/>
-                    <circle cx="90" cy="90" r="70" fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="square"
-                      strokeDasharray={2*Math.PI*70}
-                      strokeDashoffset={2*Math.PI*70-(Math.min(daily.calories/targets.calories,1))*(2*Math.PI*70)}
-                      style={{transition:"stroke-dashoffset 0.8s ease"}}/>
-                  </svg>
-                  <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"2.8rem",lineHeight:1,letterSpacing:"0.05em"}}>{daily.calories}</span>
-                    <span style={{fontSize:"0.6rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.12em"}}>of {targets.calories} kcal</span>
-                    <span style={{fontSize:"0.58rem",color:"#222",marginTop:"0.2rem",textTransform:"uppercase",letterSpacing:"0.08em"}}>
-                      {targets.calories-daily.calories>0?`${targets.calories-daily.calories} remaining`:"Goal reached!"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* MACRO CARDS */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"0.5rem",padding:"0 1.2rem"}}>
-                {[{l:"Protein",v:daily.protein,m:targets.protein,u:"g",c:"#fff"},
-                  {l:"Carbs",v:daily.carbs,m:targets.carbs,u:"g",c:"#888"},
-                  {l:"Fat",v:daily.fat,m:targets.fat,u:"g",c:"#555"}].map(m=>(
-                  <div key={m.l} style={{background:"#0a0a0a",border:"1px solid #111",padding:"0.8rem"}}>
-                    <div style={{fontSize:"1.1rem",fontWeight:800,color:m.c}}>{m.v}{m.u}</div>
-                    <div style={{fontSize:"0.58rem",color:"#333",textTransform:"uppercase",letterSpacing:"0.1em",marginTop:"0.15rem"}}>{m.l}</div>
-                    <div style={{height:"2px",background:"#111",marginTop:"0.5rem"}}>
-                      <div style={{height:"100%",background:m.c,width:`${Math.min((m.v/m.m)*100,100)}%`,transition:"width 0.5s ease"}}/>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA BUTTON */}
-              <div style={{padding:"1.2rem"}}>
-                <button className="hero-cta" style={{width:"100%",justifyContent:"center"}} onClick={()=>navigate("tracker")}>
-                  LOG MEAL →
-                </button>
-              </div>
-
               {/* BADGES */}
-              <div style={{padding:"0 1.2rem 0.5rem"}}>
+              <div style={{padding:"1rem 1.2rem 0.5rem"}}>
                 <p className="section-title">Badges</p>
               </div>
-              <div className="badges-row" style={{paddingBottom:"1.5rem"}}>
+              <div className="badges-row" style={{paddingBottom:"2rem"}}>
                 {BADGES.map(b=>(
                   <div key={b.id} className="badge-item">
                     <div className={`badge-icon ${earnedBadges.includes(b.id)?"earned":"locked"}`}>{b.icon}</div>
@@ -769,7 +817,6 @@ export default function App() {
                   </div>
                 ))}
               </div>
-
             </div>
           )}
 
