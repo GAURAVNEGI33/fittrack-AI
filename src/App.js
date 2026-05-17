@@ -290,7 +290,7 @@ const css=`
   @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
   html,body{background:#000;height:100%;width:100%;margin:0;padding:0;}
-  .app{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;max-width:430px;margin:0 auto;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow:hidden;}
+  .app{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow:hidden;}
 
   /* LOGIN */
   .login-screen{display:flex;flex-direction:column;width:100vw;height:100vh;height:100dvh;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;}
