@@ -289,22 +289,22 @@ const css=`
   @keyframes badgePop{0%{transform:scale(0);opacity:0;}70%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;}}
   @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  html,body{background:#000;height:100%;width:100%;overflow:hidden;}
-  .app{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100%;max-width:430px;margin:0 auto;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow:hidden;}
+  html,body{background:#000;height:100%;width:100%;margin:0;padding:0;}
+  .app{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;max-width:430px;margin:0 auto;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow:hidden;}
 
   /* LOGIN */
-  .login-screen{display:flex;flex-direction:column;width:100vw;height:100vh;position:relative;overflow:hidden;}
+  .login-screen{display:flex;flex-direction:column;width:100vw;height:100vh;height:100dvh;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;}
   .login-bg{position:absolute;inset:0;background:#000;}
   .login-bg img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.5;}
   .login-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.4) 40%,rgba(0,0,0,0.92) 75%,#000 100%);}
-  .login-content{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:2rem 1.5rem env(safe-area-inset-bottom, 2rem);}
-  .login-title{font-family:'Bebas Neue',sans-serif;font-size:min(4rem, 18vw);line-height:0.9;letter-spacing:0.02em;margin-bottom:0.8rem;color:#fff !important;-webkit-text-fill-color:#fff !important;}
+  .login-content{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:2rem 1.5rem 3rem;}
+  .login-title{font-family:'Bebas Neue',sans-serif;font-size:min(4rem,16vw);line-height:0.9;letter-spacing:0.02em;margin-bottom:0.8rem;color:#fff !important;-webkit-text-fill-color:#fff !important;}
   .login-title span{color:#fff !important;-webkit-text-fill-color:transparent !important;-webkit-text-stroke:2px #fff !important;}
   .login-sub{font-size:0.75rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:2rem;}
   .google-btn{display:flex;align-items:center;justify-content:center;gap:0.7rem;background:#fff;color:#000;border:none;padding:0.9rem 1.5rem;font-size:0.82rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;width:100%;transition:opacity 0.2s;}
   .google-btn:hover{opacity:0.85;}
   .google-btn:disabled{opacity:0.4;cursor:not-allowed;}
-  .login-note{font-size:0.6rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:0.8rem;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:env(safe-area-inset-bottom,0.5rem);}
+  .login-note{font-size:0.6rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:0.8rem;letter-spacing:0.08em;text-transform:uppercase;}
 
   /* NAV */
   .nav{flex-shrink:0;background:#000;border-top:1px solid #1a1a1a;display:flex;padding:0.55rem 0.5rem;gap:0.2rem;}
